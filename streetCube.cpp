@@ -1,7 +1,7 @@
 #include <iostream>
     using namespace std;
-#include <C:\Users\dxb20\Desktop\Github\Cube\facelet.h>
-#include <C:\Users\dxb20\Desktop\Github\Cube\cubie.h>
+#include "facelet.h"
+#include "cubie.h"
 
 int main()
 {

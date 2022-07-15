@@ -1,7 +1,7 @@
 #ifndef CUBIE
 #define CUBIE
 #include "move.h"
-#include "helper.h"
+#include "functions.h"
 CubieCube::CubieCube()
 {
     for(int i=0; i<8; i++) cp[i]=i;
