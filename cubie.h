@@ -73,7 +73,6 @@ FaceCube CubieCube::translate()
     }
     return fc;
 }
-
 void CubieCube::edgeMult(CubieCube* that)
 {
     int e_per[12];

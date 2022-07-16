@@ -110,5 +110,8 @@ int cco(int co, int c)
 int rotRes(int a, int r[]);
 int a();
 int* getState();
+int etoi(char);
+char itoe(int);
 CubieCube algo(string algs, CubieCube in=CubieCube());
+CubieCube resOP(int[],int[]);
 #endif

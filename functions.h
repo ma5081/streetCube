@@ -136,4 +136,45 @@ void setup()
     for(int i=0; i<57; i++)
         orieCube[i] = CubieCube(orieCubeA[i]);
 }
+
+int etoi(char c) //convert enum name to number
+{
+    switch (c)
+        {
+        case 'U':
+            return U;
+        case 'R':
+            return R;
+        case 'F':
+            return F;
+        case 'D':
+            return D;
+        case 'L':
+            return L;
+        case 'B':
+            return B;
+        default:
+            return -1;
+        }
+}
+char itoe(int i) //converts enum number to name
+{
+        switch (i)
+        {
+        case U:
+            return 'U';
+        case R:
+            return 'R';
+        case F:
+            return 'F';
+        case D:
+            return 'D';
+        case L:
+            return 'L';
+        case B:
+            return 'B';
+        default:
+            return '\0';
+        }
+}
 #endif
