@@ -66,12 +66,43 @@ CubieCube advMoveCube[18] =
     basicMoveCube[L], basicMoveCube[L]*2, basicMoveCube[L]*3,
     basicMoveCube[B], basicMoveCube[B]*2, basicMoveCube[B]*3
 };
-CubieCube pariCubeT1[12] = // T1 puts the white pieces in place keeping as much of the rest of the cube intact as possible (done before PLL and OLL phase)
+string pariT1EA[16] = //algorithms to move white edges to the top layer (any combinations)
 {
-    CubieCube(advMoveCube[Lf])*advMoveCube[Rp]*advMoveCube[Bm]*advMoveCube[Lp]*advMoveCube[Rf],
-    CubieCube(advMoveCube[Ff])*advMoveCube[Bp]*advMoveCube[Lm]*advMoveCube[Fp]*advMoveCube[Bf],
-    CubieCube(advMoveCube[Fp])*advMoveCube[Bf]*advMoveCube[Rm]*advMoveCube[Ff]*advMoveCube[Bp],
-    CubieCube(advMoveCube[Lp])*advMoveCube[Rf]*advMoveCube[Fm]*advMoveCube[Lf]*advMoveCube[Rp],
+    "", //none
+    "S/ D2 S'", //0
+    "M/ D2 M'", //1
+    "M/ S/ D2 S' M'", //0|1 //
+    "S' D2 S/", //2
+    "y/ M' U2 M2 U2 M' y'", //2|0 //
+    "M/ S' D2 S/ M'", //2|1 //
+    "M/ D2 M' y/ M' U2 M2 U2 M' y'", //2|1|0
+    "M' D2 M/", //3
+    "M' S/ D2 S' M/", //3|0 //
+    "M' U2 M2 U2 M'", //3|1
+    "M' U2 M2 U2 M' S/ D2 S'", //3|1|0 //
+    "M' S' D2 S/ M/", //3|2 //
+    "M' D2 M/ y/ M' U2 M2 U2 M' y'", //3|2|0
+    "M' U2 M2 U2 M' S' D2 S/", //3|2|1
+    "M2 S2", //3|2|1|0
+};
+string pariT1CA[16] = //algorithms to move white corners to the top layer (any combinations)
+{
+    "", //none
+    "R' D2 R/ D/ R' D' R/", //0
+    "L/ D2 L' D/ L/ D' L'", //1
+    "x' M' D2 M x/", //0|1
+    "L' D2 L/ D/ L' D' L/", //2
+    "R' D2 R/ D/ R' D' R/ L' D/ L/", //2|0
+    "S/ L2 S'", //2|1
+    "S/ L2 S' R' D2 R/ D/ R' D' R/", //2|1|0
+    "R/ D2 R' D/ R/ D' R'", //3
+    "S/ R2 S'", //3|0
+    "L/ D2 L' D/ L/ D' L' R/ D/ R'", //3|1
+    "S/ R2 S' L/ D2 L' D/ L/ D' L'", //3|1|0
+    "x' M' U2 M' x'", //3|2
+    "S/ R2 S' L/ D2 L' D/ L/ D' L'", //3|2|0
+    "S/ L2 S' R/ D2 R' D/ R/ D' R'", //3|2|1
+    "x' M' E2 M' x' U2", //3|2|1|0
 };
 string permCubeA[21] = //algorithms for PLL taken from https://jperm.net/algs/pll
 {
@@ -159,5 +190,7 @@ string orieCubeA[57] = //algorithms for OLL taken from https://jperm.net/algs/ol
 };
 CubieCube permCube[21]; // PLL phase to put the pieces in place for the OLL phase
 CubieCube orieCube[57];// OLL phase to put the non-yellows in place
-CubieCube pariCubeT2[16]; // T2 fixes the pieces that are left after the OLL phase
+CubieCube pariCubeT1E[16]; // T1 puts the white edges in place
+CubieCube pariCubeT1C[16]; // T1 puts the white corners in place
+// T2 fixes the pieces that are left after T1
 #endif

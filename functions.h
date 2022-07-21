@@ -5,18 +5,6 @@
 #include <sstream>
 #include "move.h"
 
-int rotRes(int a, int r[])
-{
-    for(int i=0; i<3; i++)
-    {
-        for(int j=0; j<r[i]; j++)
-        {
-            a = rot[i][a];
-        }
-    }
-    return a;
-}
-
 CubieCube algo(string algs, CubieCube in)
 {
     istringstream alg = istringstream(algs);
@@ -99,28 +87,24 @@ CubieCube algo(string algs, CubieCube in)
         case '3':
         case '\'':
             d = 2;
-            if(m[2])
-                cube.r[m[1]] = (cube.r[m[1]]+m[2]+2)%4;
             break;
         case '2':
             d = 1;
-            if(m[2])
-                cube.r[m[1]] = (cube.r[m[1]]+2)%4;
             break;
         default:
             d = 0;
-            if(m[2])
-                cube.r[m[1]] = (cube.r[m[1]]+m[2])%4;
             break;
         }
+        if(m[2])
+            cube.rotRes(m[1],d);
         if(b<0) continue;
         
-        b = rotRes(b, cube.r); //rotation resolve
+        b = cube.r[b]; //rotation resolve
         b *= 3; //turn X to Xf (color to move)
         cube*advMoveCube[b+d];
         if(m[0]>=0)
         {
-            m[0] = rotRes(m[0],cube.r); //rotation resolve
+            m[0] = cube.r[m[0]]; //rotation resolve
             m[0] *= 3; //turn X to Xf (color to move)
             m[0] += 2; //make it the opposite move
             cube*advMoveCube[m[0]-d];
@@ -135,6 +119,12 @@ void setup()
         permCube[i] = CubieCube(permCubeA[i]);
     for(int i=0; i<57; i++)
         orieCube[i] = CubieCube(orieCubeA[i]);
+    for(int i=0; i<16; i++)
+        pariCubeT1E[i] = CubieCube(pariT1EA[i]);
+    for(int i=0; i<16; i++)
+        pariCubeT1C[i] = CubieCube(pariT1CA[i]);
+    for(int i=0; i<16; i++)
+        {printf("%d\n",i);pariCubeT1E[i].translate().printU();}
 }
 
 int etoi(char c) //convert enum name to number

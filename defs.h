@@ -70,7 +70,7 @@ public:
     int co;
     int ep[12];
     int eo;
-    int r[3] = {0,0,0};
+    int r[6] = {U, R, F, D, L, B};
 
     CubieCube();
     CubieCube(int[], int, int[], int);
@@ -78,6 +78,7 @@ public:
     CubieCube(CubieCube* that);
     void print();
     FaceCube translate();
+    void rotRes(int,int);
     void edgeMult(CubieCube* that);
     void cornMult(CubieCube* that);
     void operator=(CubieCube* that);
@@ -88,11 +89,17 @@ public:
     CubieCube operator*(int);
 };
 // {U, R, F, D, L, B}
-int rot[3][6] =
+int rot[9][6] =
 {
+    {U, F, L, D, B, R},
+    {U, L, B, D, R, F},
     {U, B, R, D, F, L},
     {F, R, D, B, L, U},
-    {L, U, F, R, D, B}
+    {D, R, B, U, L, F},
+    {B, R, U, F, L, D},
+    {L, U, F, R, D, B},
+    {D, L, F, U, R, B},
+    {R, D, F, L, U, B}
 };
 // helper functions
 int pow(int a, int b)
@@ -109,9 +116,10 @@ int cco(int co, int c)
 }
 int rotRes(int a, int r[]);
 int a();
-int* getState();
+void getState(int[]);
 int etoi(char);
 char itoe(int);
 CubieCube algo(string algs, CubieCube in=CubieCube());
 CubieCube resOP(int[],int[]);
+void testOP(int eoco[]);
 #endif

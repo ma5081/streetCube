@@ -73,6 +73,16 @@ FaceCube CubieCube::translate()
     }
     return fc;
 }
+void CubieCube::rotRes(int a, int m)
+{
+    int t[6];
+    printf("rot: %d; %d,%d,%d,%d,%d,%d\n",3*a+m,r[0],r[1],r[2],r[3],r[4],r[5]);
+    for(int i=0; i<6; i++)
+    {
+        t[i] = r[rot[a*3+m][i]];
+    }
+    for(int i=0; i<6; i++) r[i]=t[i];
+}
 void CubieCube::edgeMult(CubieCube* that)
 {
     int e_per[12];
