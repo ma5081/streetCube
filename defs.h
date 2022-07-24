@@ -91,9 +91,9 @@ public:
 // {U, R, F, D, L, B}
 int rot[9][6] =
 {
-    {U, F, L, D, B, R},
-    {U, L, B, D, R, F},
     {U, B, R, D, F, L},
+    {U, L, B, D, R, F},
+    {U, F, L, D, B, R},
     {F, R, D, B, L, U},
     {D, R, B, U, L, F},
     {B, R, U, F, L, D},
@@ -112,9 +112,14 @@ int ceo(int eo, int e)
 }
 int cco(int co, int c)
 {
+    //CHANGED FOR TESTING
+    int ret = (int)(co/(pow(3,c)))%3;
+    return ret?(!(ret-1)+1):ret;
+}
+int uco(int co, int c)
+{
     return (int)(co/(pow(3,c)))%3;
 }
-int rotRes(int a, int r[]);
 int a();
 void getState(int[]);
 int etoi(char);

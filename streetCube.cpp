@@ -20,6 +20,8 @@ int main()
         <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
     CubieCube minOP = resOP(eo,co);
     cube*minOP;
+    cout<<endl;
+    cube.translate().printU();
     int T1E = 0;
     int T1C = 0;
     for(int i = 0; i<4; i++)
@@ -29,8 +31,93 @@ int main()
         if(co[i]==D)
             T1C = T1C|1<<i;
     }
-    cube*pariCubeT1E[T1E];
-    cube*pariCubeT1C[T1C];
+    cout<<T1C<<endl;
+    if(T1E)
+        cube*pariCubeT1E[T1E];
+    if(T1C)
+        cube*pariCubeT1C[T1C];
+    cout<<endl;
+    cube.translate().printU();
+    int r = 0;
+    do
+    {
+        r = 0;
+        for(int i = 0; i<4; i++)
+        {
+            if(eo[i]!=edgeColor[cube.ep[i]][ceo(cube.eo,i)%2]) // scan and snap edge
+            {
+                for(int j = 0; j<4; j++)
+                {
+                    int q = (j+i)%4+4;
+                    if(eo[i]==edgeColor[cube.ep[q]][(1+ceo(cube.eo,q))%2])
+                    {
+                        if(!(j%2)) {cube*advMoveCube[Dp];printf("did D'\n");}
+                        cube*pariCubeSnS[0][(j>1)+i*2];
+                        cout<<pariSnSA[0][(j>1)+i*2]<<endl;
+                        r = 1;
+                        break;
+                    }
+                    else if(eo[i]==edgeColor[cube.ep[q]][(ceo(cube.eo,q))%2])
+                    {
+                        if(j) cube*advMoveCube[Df+j-1];
+                        cube*pariCubeT1E[1<<i];
+                        r = 1;
+                        break;
+                    }
+                }
+            }
+            if(co[i]!=cornerColor[cube.cp[i]][cco(cube.co,i)%3]) // scan and snap corner
+            {
+                printf("SnS: c%d ",i);
+                for(int j = 0; j<4; j++)
+                {
+                    int q = (j+i)%4+4;
+                    if(co[i]==cornerColor[cube.cp[q]][(1+cco(cube.co,q))%3])
+                    {
+                        printf("ori 1 with c%d ",q);
+                        int d=0;
+                        if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
+                        if((cornerFacelet[q][1]/9)%3 == 2) // if the interesting facelet is in F or B
+                        {
+                            if(j%2) d++; // if corner is in slot 1 or 3, use D/
+                            else d+=3; // if corner is in slot 0 or 2, use D'
+                        }
+                        if(d) cube*advMoveCube[Df+(d-1)%3];
+                        printf("d: %d\n",d);
+                        cube*pariCubeSnS[3][i*2+0]; 
+                        cout<<pariSnSA[3][i*2+0]<<endl;
+                        r = 1;
+                        break;
+                    }
+                    else if(co[i]==cornerColor[cube.cp[q]][(2+cco(cube.co,q))%3])
+                    {
+                        printf("ori 2 with c%d ",q);
+                        int d=0;
+                        if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
+                        if((cornerFacelet[q][2]/9)%3 == 2) // if the interesting facelet is in F or B
+                        {
+                            if(j%2) d++; // if corner is in slot 1 or 3, use D/
+                            else d+=3; // if corner is in slot 0 or 2, use D'
+                        }
+                        printf("d: %d\n",d);
+                        if(d) cube*advMoveCube[Df+(d-1)%3];
+                        cube*pariCubeSnS[3][i*2+1];
+                        r = 1;
+                        break;
+                    }
+                    else if(co[i]==cornerColor[cube.cp[q]][(cco(cube.co,q))%3])
+                    {
+                        printf("ori 0 with c%d\n",q);
+                        if(j) cube*advMoveCube[Df+j-1];
+                        cube*pariCubeT1C[1<<i];
+                        r = 1;
+                        break;
+                    }
+                }
+            }
+        }
+    } while(r==1);
+    cout<<endl;
     FaceCube projection = cube.translate();
     projection.printU();
 }
@@ -58,6 +145,7 @@ void getState(int b[])
 
 CubieCube resOP(int eo[], int co[])
 {
+    string a;
     for(int i=0; i<4; i++)
     {
         if(eo[i]!=U && eo[i]!=D)
@@ -132,6 +220,7 @@ CubieCube resOP(int eo[], int co[])
                             }
                             if(curD<minD)
                             {
+                                a = permCubeA[j]+" "+(char)k+" "+orieCubeA[i]+" "+(char)u;
                                 minD = curD;
                                 minOP = op;
                                 if(!minD) return minOP;
@@ -142,5 +231,6 @@ CubieCube resOP(int eo[], int co[])
             }
         }
     }
+    cout<<a<<endl;
     return minOP;
 }

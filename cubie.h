@@ -61,7 +61,7 @@ FaceCube CubieCube::translate()
     FaceCube fc = FaceCube();
     for(int i=0; i<8; i++)
     {
-        int ori = cco(this->co,i);
+        int ori = uco(this->co,i);
         for(int j=0; j<3; j++)
             fc.f[cornerFacelet[i][(j+ori)%3]]=cornerColor[cp[i]][j];
     }
@@ -76,7 +76,6 @@ FaceCube CubieCube::translate()
 void CubieCube::rotRes(int a, int m)
 {
     int t[6];
-    printf("rot: %d; %d,%d,%d,%d,%d,%d\n",3*a+m,r[0],r[1],r[2],r[3],r[4],r[5]);
     for(int i=0; i<6; i++)
     {
         t[i] = r[rot[a*3+m][i]];
@@ -106,8 +105,8 @@ void CubieCube::cornMult(CubieCube* that)
     {
         c_per[i] = this->cp[that->cp[i]];
 
-        int ori_a = cco(this->co,that->cp[i]);
-        int ori_b = cco(that->co,i);
+        int ori_a = uco(this->co,that->cp[i]);
+        int ori_b = uco(that->co,i);
         if(ori_a < 3 && ori_b < 3) // two regular cubes
         {
             ori = ori_a + ori_b;

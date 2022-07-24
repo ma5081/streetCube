@@ -83,41 +83,41 @@ string pariT1EA[16] = //algorithms to move white edges to the top layer (any com
     "M' S' D2 S/ M/", //3|2 //
     "M' D2 M/ y/ M' U2 M2 U2 M' y'", //3|2|0
     "M' U2 M2 U2 M' S' D2 S/", //3|2|1
-    "M2 S2", //3|2|1|0
+    "M' U2 M2 U2 M' y/ M' U2 M2 U2 M' y'", //3|2|1|0
 };
 string pariT1CA[16] = //algorithms to move white corners to the top layer (any combinations)
 {
     "", //none
     "R' D2 R/ D/ R' D' R/", //0
-    "L/ D2 L' D/ L/ D' L'", //1
-    "x' M' D2 M x/", //0|1
+    "L/ D2 L' D' L/ D/ L'", //1
+    "L/ R' D2 L' R/", //0|1
     "L' D2 L/ D/ L' D' L/", //2
     "R' D2 R/ D/ R' D' R/ L' D/ L/", //2|0
     "S/ L2 S'", //2|1
     "S/ L2 S' R' D2 R/ D/ R' D' R/", //2|1|0
-    "R/ D2 R' D/ R/ D' R'", //3
-    "S/ R2 S'", //3|0
-    "L/ D2 L' D/ L/ D' L' R/ D/ R'", //3|1
-    "S/ R2 S' L/ D2 L' D/ L/ D' L'", //3|1|0
-    "x' M' U2 M' x'", //3|2
-    "S/ R2 S' L/ D2 L' D/ L/ D' L'", //3|2|0
-    "S/ L2 S' R/ D2 R' D/ R/ D' R'", //3|2|1
-    "x' M' E2 M' x' U2", //3|2|1|0
+    "R/ D2 R' D' R/ D/ R'", //3
+    "S' R2 S/", //3|0
+    "L/ D2 L' D' L/ D/ L' R/ D' R'", //3|1 
+    "S' R2 S/ L/ D2 L' D' L/ D/ L'", //3|1|0
+    "L' R/ D2 L/ R'", //3|2
+    "S' R2 S/ L' D2 L/ D/ L' D' L/", //3|2|0
+    "S/ L2 S' R/ D2 R' D' R/ D/ R'", //3|2|1
+    "x' M' D2 U2 M' x/ D2 M2", //3|2|1|0
 };
 string permCubeA[21] = //algorithms for PLL taken from https://jperm.net/algs/pll
 {
-    "x/ R' U/ R' D2 R/ U' R' D2 R2",
-    "x/ R2 D2 R/ U/ R' D2 R/ U' R/",
-    "x' R/ U' R' D/ R/ U/ R' D' R/ U/ R' D/ R/ U' R' D'",
+    "x/ R' U/ R' D2 R/ U' R' D2 R2 x'",
+    "x/ R2 D2 R/ U/ R' D2 R/ U' R/ x'",
+    "x' R/ U' R' D/ R/ U/ R' D' R/ U/ R' D/ R/ U' R' D' x/",
     "M2 U/ M/ U2 M' U/ M2",
     "M2 U' M/ U2 M' U' M2",
     "M2 U/ M2 U2 M2 U/ M2",
     "M' U/ M2 U/ M2 U/ M' U2 M2",
     "R' U' F' R/ U/ R' U' R' F/ R2 U' R' U' R/ U/ R' U/ R/",
     "R/ U/ R' U' R' F/ R2 U' R' U' R/ U/ R' F'",
-    "R' U/ R' U' y/ R' F' R2 U' R' U/ R' F/ R/ F",
+    "R' U/ R' U' y/ R' F' R2 U' R' U/ R' F/ R/ F y'",
     "F/ R/ U' R' U' R/ U/ R' F' R/ U/ R' U' R' F/ R/ F'",
-    "x/ R2 F/ R/ F' R/ U2 r' U/ r/ U2",
+    "x/ R2 F/ R/ F' R/ U2 r' U/ r/ U2 x'",
     "R/ U/ R' F' R/ U/ R' U' R' F/ R2 U' R'",
     "R/ U' R' U' R/ U/ R/ D/ R' U' R/ D' R' U2 R'",
     "R2 F/ R/ U/ R/ U' R' F' R/ U2 R' U2 R/",
@@ -188,9 +188,74 @@ string orieCubeA[57] = //algorithms for OLL taken from https://jperm.net/algs/ol
     "r' U' r/ U' R' U/ R/ U' R' U/ R/ r' U/ r/",
     "R/ U/ R' U' M' U/ R/ U' r'"
 };
+string pariSnSEA[8] = // Scan and Snap the corners
+{
+    "S/ D/ S'",
+    "S/ D' S'",
+    "M/ D/ M'",
+    "M/ D' M'",
+    "S' D/ S/",
+    "S' D' S/",
+    "M' D/ M/",
+    "M' D' M/",
+};
+string pariSnSE2A[8] = // Scan and Snap mid layer edges
+{
+    "R/ E' R' E/",
+    "R' E/ R/ E'",
+    "F/ E' F' E/",
+    "F' E/ F/ E'",
+    "L/ E' L' E/",
+    "L' E/ L/ E'",
+    "B/ E' B' E/",
+    "B' E/ B/ E'"
+};
+string pariSnSCA[8] = // Scan and Snap the edges
+{
+    "R' D/ R/",
+    "R' D' R/",
+    "L/ D/ L'",
+    "L/ D' L'",
+    "L' D/ L/",
+    "L' D' L/",
+    "R/ D/ R'",
+    "R/ D' R'",
+};
+string pariSnSECA[8] = // Scan and Snap combos
+{
+    "B/ R' B'",
+    "r' D/ r/",
+    "l/ D' l'",
+    "B' L/ B/",
+    "F/ L' F'",
+    "l' D/ l/",
+    "r/ D' r'",
+    "F' R/ F/"
+};
+string pariSnSCECA[8] = // Scan and Snap full combo
+{
+    "B/ R2 B' R/",
+    "F' R2 F/ R'",
+    "R/ F2 R' F/",
+    "L' F2 L/ F'",
+    "F/ L2 F' L/",
+    "B' L2 B/ L'",
+    "L/ B2 L' B/",
+    "R' B2 R/ B'"
+};
+string* pariSnSA[5] = 
+{
+    pariSnSEA,
+    pariSnSECA,
+    pariSnSCECA,
+    pariSnSCA,
+    pariSnSE2A
+};
 CubieCube permCube[21]; // PLL phase to put the pieces in place for the OLL phase
 CubieCube orieCube[57];// OLL phase to put the non-yellows in place
 CubieCube pariCubeT1E[16]; // T1 puts the white edges in place
 CubieCube pariCubeT1C[16]; // T1 puts the white corners in place
-// T2 fixes the pieces that are left after T1
+// T2 fixes the pieces that are left after T1 using SnS as the first step
+CubieCube pariCubeSnS[5][8];
+
 #endif

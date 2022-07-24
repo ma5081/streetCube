@@ -18,26 +18,26 @@
 // atomic<int> Q6;
 // atomic<int> Q7;
 // atomic<int>* avgD[]={&Q0,&Q1,&Q2,&Q3,&Q4,&Q5,&Q6,&Q7};
-int avgD[8]={0};
+int avgA[9]={0};
+int avgB[9]={0};
+int avgD[9]={0};
 microseconds sumT;
 // atomic<int> counter;
 // mutex m;
 // mutex t;
 // condition_variable cv;
-CubieCube resOP(int eoco[]);
-CubieCube unresOP(int eoco[]);
-int a()
+int res(int eo[], int co[]);
+int checkD(int eo[], int co[], CubieCube op)
 {
-    char l[] = {'U','R','F','D','L','B'};
-    for(int i=0; i<6; i++)
+    int curD=8;
+    for(int p=0; p<4; p++)
     {
-        for(int j=1; j<10; j++)
-        {
-            cout<<l[i]<<j<<", ";
-        }
-        cout<<endl;
+        if(eo[p]==edgeColor[op.ep[p]][ceo(op.eo,p)])
+            curD--;
+        if(co[p]==cornerColor[op.cp[p]][cco(op.co,p)])
+            curD--;
     }
-    return 0;
+    return curD;
 }
 int b() // checks if auto generated OLLs and PLLs only affect LL
 { 
@@ -47,20 +47,20 @@ int b() // checks if auto generated OLLs and PLLs only affect LL
         for(int j=4; j<8; j++)
         {
             if(permCube[i].cp[j]!=j)
-                {
-                    printf("cpP: %d\n", i);
-                    break;
-                }
+            {
+                printf("cpP: %d\n", i);
+                break;
+            }
 
         }
         for(int j=4; j<12; j++)
         {
             if(permCube[i].ep[j]!=j)
-                {
-                    printf("epP: %d\n", i);
-                    permCube[i].translate().printA();
-                    break;
-                }
+            {
+                printf("epP: %d\n", i);
+                permCube[i].translate().printA();
+                break;
+            }
         }
         if(permCube[i].co!=0) 
             printf("coP: %d\n", i);
@@ -127,6 +127,7 @@ int d()
 int main()
 {
     setup();
+    b();
     // for(int i=0; i<8; i++)
     //     atomic_init(avgD[i],0);
     // atomic_init(&counter,0);
@@ -179,28 +180,145 @@ int main()
     // cout<<"time: "<<sumT.count()<<endl;
     srand((unsigned)time(NULL));
     auto start = high_resolution_clock::now();
-    int runs=100000;
+    int runs=1000;
     for(int i=0;i<runs;i++)
     {
+        printf("%d\n",i);
         int eoco[8];
         for(int i=0; i<8; i++){eoco[i]=rand()%6;}
-        resOP(eoco);
+        int eo[4];
+        int co[4];
+        for(int i=0; i<4; i++){eo[i]=(int)eoco[i];co[i]=(int)eoco[i+4];}
+        avgD[res(eo,co)]++;
     }
     auto stop = high_resolution_clock::now();
     auto avgdur = duration_cast<microseconds>(stop - start)/runs;
-    for(int i=0; i<8; i++)
+    for(int i=0; i<9; i++)
         cout<<i<<": "<<((avgD[i])/(double)runs)*100<<"%"<<endl;
+    cout<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgB[i])/(double)runs)*100<<"%"<<endl;
+    cout<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgA[i])/(double)runs)*100<<"%"<<endl;
     cout<<avgdur.count()<<endl;
     // });
 }
-
-CubieCube resOP(int eoco[])
+int resSnS(int eo[], int co[], CubieCube *cube)
 {
-    setup();
-    int eo[4];
-    int co[4];
-    for(int i=0; i<4; i++){eo[i]=eoco[i]; co[i]=eoco[i+4];}
-    // auto start = high_resolution_clock::now();
+    int r = 0;
+    for(int i = 0; i<4; i++)
+    {
+        if(eo[i]!=edgeColor[cube->ep[i]][ceo(cube->eo,i)%2]) // scan and snap edge
+        {
+            for(int j = 0; j<4; j++)
+            {
+                int q = (j+i)%4+4;
+                if(eo[i]==edgeColor[cube->ep[q]][(1+ceo(cube->eo,q))%2])
+                {
+                    if(!(j%2)) *cube*advMoveCube[Dp];
+                    *cube*pariCubeSnS[0][(j>1)+i*2];
+                    // cout<<pariSnSA[0][(j>1)+i*2]<<endl;
+                    r = 1;
+                    break;
+                }
+                else if(eo[i]==edgeColor[cube->ep[q]][(ceo(cube->eo,q))%2])
+                {
+                    if(j) *cube*advMoveCube[Df+j-1];
+                    *cube*pariCubeT1E[1<<i];
+                    r = 1;
+                    break;
+                }
+            }
+        }
+        if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3]) // scan and snap corner
+        {
+            // printf("SnS: c%d ",i);
+            for(int j = 0; j<4; j++)
+            {
+                int q = (j+i)%4+4;
+                if(co[i]==cornerColor[cube->cp[q]][(1+cco(cube->co,q))%3])
+                {
+                    // printf("ori 1 with c%d ",q);
+                    int d=0;
+                    if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
+                    if((cornerFacelet[q][1]/9)%3 == 2) // if the interesting facelet is in F or B
+                    {
+                        if(j%2) d++; // if corner is in slot 1 or 3, use D/
+                        else d+=3; // if corner is in slot 0 or 2, use D'
+                    }
+                    if(d) *cube*advMoveCube[Df+(d-1)%3];
+                    // printf("d: %d\n",d);
+                    *cube*pariCubeSnS[3][i*2+0]; 
+                    // cout<<pariSnSA[3][i*2+0]<<endl;
+                    r = 1;
+                    break;
+                }
+                else if(co[i]==cornerColor[cube->cp[q]][(2+cco(cube->co,q))%3])
+                {
+                    // printf("ori 2 with c%d ",q);
+                    int d=0;
+                    if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
+                    if((cornerFacelet[q][2]/9)%3 == 2) // if the interesting facelet is in F or B
+                    {
+                        if(j%2) d++; // if corner is in slot 1 or 3, use D/
+                        else d+=3; // if corner is in slot 0 or 2, use D'
+                    }
+                    // printf("d: %d\n",d);
+                    if(d) *cube*advMoveCube[Df+(d-1)%3];
+                    *cube*pariCubeSnS[3][i*2+1];
+                    r = 1;
+                    break;
+                }
+                else if(co[i]==cornerColor[cube->cp[q]][(cco(cube->co,q))%3])
+                {
+                    //printf("ori 0 with c%d\n",q);
+                    if(j) *cube*advMoveCube[Df+j-1];
+                    *cube*pariCubeT1C[1<<i];
+                    r = 1;
+                    break;
+                }
+            }
+        }
+    }
+    return r;
+}
+int res(int eo[], int co[])
+{
+    // cout<<itoe(co[ULB])<<itoe(eo[UB])<<itoe(co[UBR])<<endl
+    //     <<itoe(eo[UL]) <<'U'         <<itoe(eo[UR]) <<endl
+    //     <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
+    CubieCube cube = CubieCube();
+    cube*resOP(eo,co);
+    avgA[checkD(eo,co,cube)]++;
+    int T1E = 0;
+    int T1C = 0;
+    for(int i = 0; i<4; i++)
+    {
+        if(eo[i]==D)
+            T1E = T1E|1<<i;
+        if(co[i]==D)
+            T1C = T1C|1<<i;
+    }
+    if(T1E)
+        cube*pariCubeT1E[T1E];
+    if(T1C)
+        cube*pariCubeT1C[T1C];
+    avgB[checkD(eo,co,cube)]++;
+    while(resSnS(eo,co,&cube));
+    return checkD(eo,co,cube);
+}
+CubieCube resOP(int eo[], int co[])
+{
+    for(int i=0; i<4; i++)
+    {
+        if(eo[i]!=U && eo[i]!=D)
+            break;
+        if(co[i]!=U && co[i]!=D)
+            break;
+        if(i==3)
+            return CubieCube();
+    }
     long oPoss=0;
     int oU[57]={};
     for(int i=0; i<57; i++) //check for U congruent OLLs
@@ -228,8 +346,16 @@ CubieCube resOP(int eoco[])
             if(!o){oPoss = oPoss|(1<<i);oU[i]=oU[i]|(1<<(u+1));}
         }
     }
+    if(!oPoss) return CubieCube();
     int minD=8;
     CubieCube minOP = CubieCube();
+    for(int p=0; p<4; p++)
+    {
+        if(eo[p]==D||eo[p]==edgeColor[minOP.ep[p]][ceo(minOP.eo,p)%2])
+            minD--;
+        if(co[p]==D||co[p]==cornerColor[minOP.cp[p]][cco(minOP.co,p)%3])
+            minD--;
+    }
     for(int i=0; i<57; i++) 
     {
         if(ceo(oPoss,i))
@@ -260,6 +386,7 @@ CubieCube resOP(int eoco[])
                             {
                                 minD = curD;
                                 minOP = op;
+                                if(!minD) return minOP;
                             }
                         }
                     }
@@ -267,7 +394,6 @@ CubieCube resOP(int eoco[])
             }
         }
     }
-    avgD[minD]++;
     return minOP;
 }
 void testOP(int eoco[])
@@ -352,7 +478,6 @@ void testOP(int eoco[])
     // counter--;
     // cv.notify_all();
 }
-
 int f()
 {
     setup();

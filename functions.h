@@ -18,6 +18,7 @@ CubieCube algo(string algs, CubieCube in)
         int m[3] = {-1,0,0}; // extra move / rotation axis / f or null or p
         char a = '\0';
         char c = '\0';
+        b=0;
         alg>>a;
         switch (a)
         {
@@ -25,7 +26,7 @@ CubieCube algo(string algs, CubieCube in)
             m[0] = D;
         case 'd':
             m[1] = 0;
-            m[2] = 3;
+            m[2] = 2;
         case 'U':
             b=U;
             break;
@@ -33,13 +34,13 @@ CubieCube algo(string algs, CubieCube in)
             m[0] = L;
         case 'l':
             m[1] = 1;
-            m[2] = 3;
+            m[2] = 2;
         case 'R':
             b=R;
             break;
         case 'b':
             m[1] = 2;
-            m[2] = 3;
+            m[2] = 2;
         case 'F':
             b=F;
             break;
@@ -96,7 +97,7 @@ CubieCube algo(string algs, CubieCube in)
             break;
         }
         if(m[2])
-            cube.rotRes(m[1],d);
+            cube.rotRes(m[1],(m[2]-1)?(2-d):d);
         if(b<0) continue;
         
         b = cube.r[b]; //rotation resolve
@@ -123,10 +124,9 @@ void setup()
         pariCubeT1E[i] = CubieCube(pariT1EA[i]);
     for(int i=0; i<16; i++)
         pariCubeT1C[i] = CubieCube(pariT1CA[i]);
-    for(int i=0; i<16; i++)
-        {printf("%d\n",i);pariCubeT1E[i].translate().printU();}
+    for(int i=0; i<5; i++)
+        for(int j=0; j<8; j++) pariCubeSnS[i][j] = CubieCube(pariSnSA[i][j]);
 }
-
 int etoi(char c) //convert enum name to number
 {
     switch (c)
