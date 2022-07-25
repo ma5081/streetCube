@@ -76,12 +76,13 @@ enum PLL
     Ga, Gb, Gc, Gd
 };
 
-enum BS
+enum UI
 {
-    // Basic Symmetries
-    ROT_URF3,
-    ROT_F2,
-    ROT_U4,
-    MIRR_LR2
+    Yellow,
+    Red,
+    Blue,
+    White,
+    Orange,
+    Green
 };
 #endif

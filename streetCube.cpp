@@ -49,6 +49,7 @@ int main()
                 for(int j = 0; j<4; j++)
                 {
                     int q = (j+i)%4+4;
+                    int p = (j+i)%4+8;
                     if(eo[i]==edgeColor[cube.ep[q]][(1+ceo(cube.eo,q))%2])
                     {
                         if(!(j%2)) {cube*advMoveCube[Dp];printf("did D'\n");}
@@ -62,6 +63,58 @@ int main()
                         if(j) cube*advMoveCube[Df+j-1];
                         cube*pariCubeT1E[1<<i];
                         r = 1;
+                        break;
+                    }
+                    else if(eo[i]==edgeColor[cube.ep[p]][(1+ceo(cube.eo,p))%2]) // midlayer R/L
+                    {
+                        int u = 0;
+                        if((j+3)%4 > 1) // if edge is on the same layer
+                        {
+                            if(!(i%2)) // if the original piece is on R/L
+                                u+=2;
+                            else
+                            {
+                                if(j==3) u+=1;
+                                else u+=3;
+                            }
+                        }
+                        cout<<"R/L "<<u<<" between e"<<i<<" and e"<<p<<endl;
+                        if(u) 
+                        {
+                            int adj = ((j+i+3)%4)<1; // finds if the piece is on R=1 or L=0
+                            int jadj = j-(i-!adj*2+4)%4;
+                            advMoveCube[u-1];
+                            cube*pariCubeSnS[4][adj*4+(jadj==1)];
+                        }
+                        else
+                            cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the right or left
+                        r=1;
+                        break;
+                    }
+                    else if(eo[i]==edgeColor[cube.ep[p]][(ceo(cube.eo,p))%2]) // midlayer F/B
+                    {
+                        int u = 0;
+                        if((j+3)%4 > 1) // if edge is on the same layer
+                        {
+                            if(i%2) // if the original piece is on F/B
+                                u+=2;
+                            else
+                            {
+                                if(j==3) u+=1;
+                                else u+=3;
+                            }
+                        }
+                        cout<<"F/B "<<u<<" between e"<<i<<" and e"<<p<<endl;
+                        if(u) 
+                        {
+                            int adj = ((j+i)%4)<1; // finds if the piece is on F=1 or B=0
+                            int jadj = j-(i-!adj*2+1+4)%4;
+                            advMoveCube[u-1];
+                            cube*pariCubeSnS[4][adj*4+(jadj==1)];
+                        }
+                        else
+                            cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the front or back
+                        r=1;
                         break;
                     }
                 }

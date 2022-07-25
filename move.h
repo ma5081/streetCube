@@ -251,11 +251,30 @@ string* pariSnSA[5] =
     pariSnSCA,
     pariSnSE2A
 };
+string pariOriEA[4] = // algorithms for reorienting a single edge
+{
+    "R/ E2 R2 E/ R/ E/",
+    "F/ E2 F2 E/ F/ E/",
+    "L/ E2 L2 E/ L/ E/",
+    "B/ E2 B2 E/ B/ E/"
+};
+string pariOriCA[8] = // algorithms for reorienting a single corner
+{
+    "R' D' R/ D/ R' D' R/",
+    "R' D/ R/ D' R' D/ R/",
+    "L/ D' L' D/ L/ D' L'",
+    "L/ D/ L' D' L/ D/ L'",
+    "L' D' L/ D/ L' D' L/",
+    "L' D/ L/ D' L' D/ L/",
+    "R/ D' R' D/ R/ D' R'",
+    "R/ D/ R' D' R/ D/ R'",
+};
 CubieCube permCube[21]; // PLL phase to put the pieces in place for the OLL phase
 CubieCube orieCube[57];// OLL phase to put the non-yellows in place
 CubieCube pariCubeT1E[16]; // T1 puts the white edges in place
 CubieCube pariCubeT1C[16]; // T1 puts the white corners in place
 // T2 fixes the pieces that are left after T1 using SnS as the first step
 CubieCube pariCubeSnS[5][8];
-
+CubieCube pariCubeOriE[4];
+CubieCube pariCubeOriC[8];
 #endif

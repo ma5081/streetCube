@@ -126,6 +126,10 @@ void setup()
         pariCubeT1C[i] = CubieCube(pariT1CA[i]);
     for(int i=0; i<5; i++)
         for(int j=0; j<8; j++) pariCubeSnS[i][j] = CubieCube(pariSnSA[i][j]);
+    for(int i=0; i<4; i++)
+        pariCubeOriE[i] = CubieCube(pariOriEA[i]);
+    for(int i=0; i<8; i++)
+        pariCubeOriC[i] = CubieCube(pariOriCA[i]);
 }
 int etoi(char c) //convert enum name to number
 {

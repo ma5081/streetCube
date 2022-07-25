@@ -20,6 +20,7 @@
 // atomic<int>* avgD[]={&Q0,&Q1,&Q2,&Q3,&Q4,&Q5,&Q6,&Q7};
 int avgA[9]={0};
 int avgB[9]={0};
+int avgC[9]={0};
 int avgD[9]={0};
 microseconds sumT;
 // atomic<int> counter;
@@ -180,7 +181,7 @@ int main()
     // cout<<"time: "<<sumT.count()<<endl;
     srand((unsigned)time(NULL));
     auto start = high_resolution_clock::now();
-    int runs=1000;
+    int runs=100000;
     for(int i=0;i<runs;i++)
     {
         printf("%d\n",i);
@@ -197,12 +198,39 @@ int main()
         cout<<i<<": "<<((avgD[i])/(double)runs)*100<<"%"<<endl;
     cout<<endl;
     for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgC[i])/(double)runs)*100<<"%"<<endl;
+    cout<<endl;
+    for(int i=0; i<9; i++)
         cout<<i<<": "<<((avgB[i])/(double)runs)*100<<"%"<<endl;
     cout<<endl;
     for(int i=0; i<9; i++)
         cout<<i<<": "<<((avgA[i])/(double)runs)*100<<"%"<<endl;
     cout<<avgdur.count()<<endl;
     // });
+}
+int resOri(int eo[], int co[], CubieCube *cube)
+{
+    for(int i=0; i<4; i++)
+    {
+        if(eo[i]!=edgeColor[cube->ep[i]][ceo(cube->eo,i)%2]) // reorient edge
+        {
+            cout<<itoe(co[ULB])<<itoe(eo[UB])<<itoe(co[UBR])<<endl
+                <<itoe(eo[UL]) <<'U'         <<itoe(eo[UR]) <<endl
+                <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
+            cout<<endl;
+            cube->translate().printU();
+            printf("reOri E %d\n",cube->ep[i]);
+            cout<<pariOriEA[i]<<endl;
+            *cube*pariCubeOriE[i];
+            cube->translate().printU();
+            cout<<endl;
+        }
+        if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3])
+        {
+            bool b = co[i]!=cornerColor[cube->cp[i]][(1+cco(cube->co,i))%3];
+            *cube*pariCubeOriC[i*2+b];
+        }
+    }
 }
 int resSnS(int eo[], int co[], CubieCube *cube)
 {
@@ -214,6 +242,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
             for(int j = 0; j<4; j++)
             {
                 int q = (j+i)%4+4;
+                int p = (j+i)%4+8;
                 if(eo[i]==edgeColor[cube->ep[q]][(1+ceo(cube->eo,q))%2])
                 {
                     if(!(j%2)) *cube*advMoveCube[Dp];
@@ -227,6 +256,72 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                     if(j) *cube*advMoveCube[Df+j-1];
                     *cube*pariCubeT1E[1<<i];
                     r = 1;
+                    break;
+                }
+                else if(eo[i]==edgeColor[cube->ep[p]][(1+ceo(cube->eo,p))%2]) // midlayer R/L
+                {
+                    int u = 0;
+                    if((j+3)%4 > 1) // if edge is on the same layer
+                    {
+                        if(!(i%2)) // if the original piece is on R/L
+                            u+=2;
+                        else
+                        {
+                            if(j==3) u+=1;
+                            else u+=3;
+                        }
+                    }
+                    else if (i%2)
+                    {
+                        if(j==2) u+=1;
+                        else u+=3;
+                    }
+                    // cout<<"R/L "<<u<<" between e"<<i<<" and e"<<p<<endl;
+                    if(u) 
+                    {
+                        int iadj = (i+u)%4; // finds new i
+                        int jadj = (j-u+4)%4; // j in relation to the new adj
+                        *cube*advMoveCube[u-1];
+                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
+                        // cout<<pariSnSA[4][iadj*2+(jadj==1)]<<endl;
+                        *cube*advMoveCube[2-(u-1)];
+                    }
+                    else
+                        *cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the right or left
+                    r=1;
+                    break;
+                }
+                else if(eo[i]==edgeColor[cube->ep[p]][(ceo(cube->eo,p))%2]) // midlayer F/B
+                {
+                    int u = 0;
+                    if((j+3)%4 > 1) // if edge is on the same layer
+                    {
+                        if(i%2) // if the original piece is on F/B
+                            u+=2;
+                        else
+                        {
+                            if(j==3) u+=1;
+                            else u+=3;
+                        }
+                    }
+                    else if (!(i%2))
+                    {
+                        if(j==2) u+=1;
+                        else u+=3;
+                    }
+                    // cout<<"F/B "<<u<<" between e"<<i<<" and e"<<p<<endl;
+                    if(u) 
+                    {
+                        int iadj = (i+u)%4; // finds the new i
+                        int jadj = (j-u+4)%4; // finds the j in relation to new i
+                        *cube*advMoveCube[u-1];
+                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
+                        // cout<<pariSnSA[4][iadj*2+(jadj==1)]<<endl;
+                        *cube*advMoveCube[2-(u-1)];
+                    }
+                    else
+                        *cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the front or back
+                    r=1;
                     break;
                 }
             }
@@ -306,6 +401,8 @@ int res(int eo[], int co[])
         cube*pariCubeT1C[T1C];
     avgB[checkD(eo,co,cube)]++;
     while(resSnS(eo,co,&cube));
+    avgC[checkD(eo,co,cube)]++;
+    resOri(eo,co,&cube);
     return checkD(eo,co,cube);
 }
 CubieCube resOP(int eo[], int co[])

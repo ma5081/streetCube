@@ -101,6 +101,17 @@ int rot[9][6] =
     {D, L, F, U, R, B},
     {R, D, F, L, U, B}
 };
+// UI helpers
+int rtoc[6][6] = //relative to color conversion by respective U
+{
+    {Yellow, Red, Blue, White, Orange, Green},
+    {Red, Blue, Yellow, Orange, Green, White},
+    {Blue, Yellow, Red, Green, White, Orange},
+    {White, Green, Orange, Yellow, Blue, Red},
+    {Green, Orange, White, Blue, Red, Yellow},
+    {Orange, White, Green, Red, Yellow, Blue}
+};
+char etoc[6] = {'Y','R','B','W','O','G'};
 // helper functions
 int pow(int a, int b)
 {
