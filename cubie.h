@@ -8,6 +8,7 @@ CubieCube::CubieCube()
     co = 0;
     for(int i=0; i<12; i++) ep[i]=i;
     eo = 0;
+    scramble = "";
 }
 CubieCube::CubieCube(int cp[], int co, int ep[], int eo)
 {
@@ -15,6 +16,7 @@ CubieCube::CubieCube(int cp[], int co, int ep[], int eo)
     this->co = co;
     for(int i=0; i<12; i++) this->ep[i]=ep[i];
     this->eo = eo;
+    scramble = "";
 }
 CubieCube::CubieCube(string algs)
 {
@@ -23,6 +25,7 @@ CubieCube::CubieCube(string algs)
     this->co = cube.co;
     for(int i=0; i<12; i++) this->ep[i]=cube.ep[i];
     this->eo = cube.eo;
+    scramble = "";
 }
 CubieCube::CubieCube(CubieCube* that)
 {
@@ -30,6 +33,7 @@ CubieCube::CubieCube(CubieCube* that)
     this->co = that->co;
     for(int i=0; i<12; i++) this->ep[i]=that->ep[i];
     this->eo = that->eo;
+    scramble = "";
 }
 
 void CubieCube::print()
@@ -146,6 +150,7 @@ void CubieCube::operator=(CubieCube* that)
     for(int i=0; i<12; i++) this->ep[i]=that->ep[i];
     this->eo = that->eo;
     for(int i=0; i<3; i++) this->r[i]=that->r[i];
+    this->scramble = that->scramble;
 }
 void CubieCube::operator=(CubieCube c)
 {
@@ -154,6 +159,7 @@ void CubieCube::operator=(CubieCube c)
     for(int i=0; i<12; i++) this->ep[i]=c.ep[i];
     this->eo = c.eo;
     for(int i=0; i<3; i++) this->r[i]=c.r[i];
+    this->scramble = c.scramble;
 }
 bool CubieCube::operator==(CubieCube* that)
 {

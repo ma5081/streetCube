@@ -66,6 +66,7 @@ public:
 class CubieCube
 {
 public:
+    string scramble;
     int cp[8];
     int co;
     int ep[12];
@@ -112,6 +113,31 @@ int rtoc[6][6] = //relative to color conversion by respective U
     {Orange, White, Green, Red, Yellow, Blue}
 };
 char etoc[6] = {'Y','R','B','W','O','G'};
+string mtoc[18] = 
+{
+    "U/","U2","U'",
+    "R/","R2","R'",
+    "F/","F2","F'",
+    "D/","D2","D'",
+    "L/","L2","L'",
+    "B/","B2","B'"
+};
+string pName[21] =
+{
+    "Aa", "Ab",
+    "E",
+    "Ua", "Ub",
+    "H",
+    "Z",
+    "F",
+    "T",
+    "V",
+    "Y",
+    "Ja", "Jb",
+    "Ra", "Rb",
+    "Na", "Nb",
+    "Ga", "Gb", "Gc", "Gd"
+};
 // helper functions
 int pow(int a, int b)
 {
@@ -136,6 +162,8 @@ void getState(int[]);
 int etoi(char);
 char itoe(int);
 CubieCube algo(string algs, CubieCube in=CubieCube());
-CubieCube resOP(int[],int[]);
+void resOP(int[],int[],CubieCube*);
+int resSnS(int[],int[],CubieCube*);
+void resOri(int[],int[],CubieCube*);
 void testOP(int eoco[]);
 #endif
