@@ -4,7 +4,7 @@
 #include <iostream>    
     using namespace std;
 
-FaceCube::FaceCube()
+FaceCube::FaceCube() // default constructor
 {
     for(int i=0; i<6; i++)
     {
@@ -12,7 +12,7 @@ FaceCube::FaceCube()
     }
 }
 
-void FaceCube::printA()
+void FaceCube::printA() // print all faces
 {
     for(int j=0; j<6; j++)
     {
@@ -20,7 +20,7 @@ void FaceCube::printA()
         cout<<'\n';
     }
 }
-void FaceCube::printU(int j)
+void FaceCube::printU(int j) // print 1 face
 {
     string p = "";
     for(int i=1; i<=9; i++)
@@ -54,7 +54,7 @@ void FaceCube::printU(int j)
     cout<<p;
 }
 
-void FaceCube::operator=(FaceCube that)
+void FaceCube::operator=(FaceCube that) // copy FaceCube
 {
     for(int i=0; i<54; i++)
         this->f[i] = that.f[i];

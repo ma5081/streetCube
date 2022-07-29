@@ -2,7 +2,7 @@
 #define CUBIE
 #include "move.h"
 #include "functions.h"
-CubieCube::CubieCube()
+CubieCube::CubieCube() // default constructor
 {
     for(int i=0; i<8; i++) cp[i]=i;
     co = 0;
@@ -10,7 +10,7 @@ CubieCube::CubieCube()
     eo = 0;
     scramble = "";
 }
-CubieCube::CubieCube(int cp[], int co, int ep[], int eo)
+CubieCube::CubieCube(int cp[], int co, int ep[], int eo) // basic input constructor
 {
     for(int i=0; i<8; i++) this->cp[i]=cp[i];
     this->co = co;
@@ -18,7 +18,7 @@ CubieCube::CubieCube(int cp[], int co, int ep[], int eo)
     this->eo = eo;
     scramble = "";
 }
-CubieCube::CubieCube(string algs)
+CubieCube::CubieCube(string algs) // simulator constructor
 {
     CubieCube cube = algo(algs);
     for(int i=0; i<8; i++) this->cp[i]=cube.cp[i];
@@ -27,16 +27,16 @@ CubieCube::CubieCube(string algs)
     this->eo = cube.eo;
     scramble = "";
 }
-CubieCube::CubieCube(CubieCube* that)
+CubieCube::CubieCube(CubieCube* that) // copy by pointer
 {
     for(int i=0; i<8; i++) this->cp[i]=that->cp[i];
     this->co = that->co;
     for(int i=0; i<12; i++) this->ep[i]=that->ep[i];
     this->eo = that->eo;
-    scramble = "";
+    scramble = that->scramble;
 }
 
-void CubieCube::print()
+void CubieCube::print() // print coordinate level representation
 {
     // printf("%d.%d.(",co,eo);
     for(int i=7; i>=0; i--)
@@ -60,7 +60,7 @@ void CubieCube::print()
     }
     printf(")\n");
 }
-FaceCube CubieCube::translate()
+FaceCube CubieCube::translate() // translate CubieCube to FaceCube
 {
     FaceCube fc = FaceCube();
     for(int i=0; i<8; i++)
@@ -77,7 +77,7 @@ FaceCube CubieCube::translate()
     }
     return fc;
 }
-void CubieCube::rotRes(int a, int m)
+void CubieCube::rotRes(int a, int m) // resolves rotation
 {
     int t[6];
     for(int i=0; i<6; i++)
@@ -86,7 +86,7 @@ void CubieCube::rotRes(int a, int m)
     }
     for(int i=0; i<6; i++) r[i]=t[i];
 }
-void CubieCube::edgeMult(CubieCube* that)
+void CubieCube::edgeMult(CubieCube* that) // multiplies edges, helper for multiplication
 {
     int e_per[12];
     int e_ori = 0;
@@ -100,7 +100,7 @@ void CubieCube::edgeMult(CubieCube* that)
     
     this->eo=e_ori;
 }
-void CubieCube::cornMult(CubieCube* that)
+void CubieCube::cornMult(CubieCube* that) //multiplies corners, helper for multiplication
 {
     int c_per[8];
     int c_ori = 0;
@@ -143,7 +143,7 @@ void CubieCube::cornMult(CubieCube* that)
     this->co=c_ori;
 }
 
-void CubieCube::operator=(CubieCube* that)
+void CubieCube::operator=(CubieCube* that) // copy by pointer
 {
     for(int i=0; i<8; i++) this->cp[i]=that->cp[i];
     this->co = that->co;
@@ -152,7 +152,7 @@ void CubieCube::operator=(CubieCube* that)
     for(int i=0; i<3; i++) this->r[i]=that->r[i];
     this->scramble = that->scramble;
 }
-void CubieCube::operator=(CubieCube c)
+void CubieCube::operator=(CubieCube c) // copy by cube
 {
     for(int i=0; i<8; i++) this->cp[i]=c.cp[i];
     this->co = c.co;
@@ -161,7 +161,7 @@ void CubieCube::operator=(CubieCube c)
     for(int i=0; i<3; i++) this->r[i]=c.r[i];
     this->scramble = c.scramble;
 }
-bool CubieCube::operator==(CubieCube* that)
+bool CubieCube::operator==(CubieCube* that) // check cube equality
 {
     if(this->co!=that->co || this->eo!=that->eo) return false;
     for(int i=0; i<8; i++)
@@ -170,20 +170,20 @@ bool CubieCube::operator==(CubieCube* that)
         if(this->ep[i]!=that->ep[i]) return false;
     return true;
 }
-CubieCube* CubieCube::operator*(CubieCube* that)
+CubieCube* CubieCube::operator*(CubieCube* that) // multiply cube states by pointer
 {
     this->cornMult(that);
     this->edgeMult(that);
     return this;
 }
-CubieCube CubieCube::operator*(CubieCube that)
+CubieCube CubieCube::operator*(CubieCube that) // multiply cube states
 {
     this->cornMult(&that);
     this->edgeMult(&that);
     CubieCube ret = CubieCube(this);
     return ret;
 }
-CubieCube CubieCube::operator*(int m)
+CubieCube CubieCube::operator*(int m) // multiply cube by itself m times
 {
     CubieCube prepic= CubieCube(this->cp,this->co,this->ep,this->eo);
     for(int i=1; i<m; i++)

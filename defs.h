@@ -33,29 +33,11 @@ int edgeColor[12][2] =
             };
 
 // "constants"
-#define N_PERM_4 = 24
-#define N_CHOOSE_8_4 = 70
-
-//
 #define N_MOVE = 18  // number of possible face moves
 #define N_PLL = 21 // number of PLLs
 #define N_OLL = 57 // number of OLLs
-//
 
-#define N_TWIST = 2187  // 3^7 possible corner orientations in phase 1
-#define N_FLIP = 2048  // 2^11 possible edge orientations in phase 1
-#define N_SLICE_SORTED = 11880  // 12*11*10*9 possible positions of the FR, FL, BL, BR edges in phase 1
-#define N_SLICE = N_SLICE_SORTED/N_PERM_4  // we ignore the permutation of FR, FL, BL, BR in phase 1
-#define N_FLIPSLICE_CLASS = 64430  // number of equivalence classes for combined flip+slice concerning symmetry group D4h
-
-#define N_U_EDGES_PHASE2 = 1680  // number of different positions of the edges UR, UF, UL and UB in phase 2
-#define N_CORNERS = 40320  // 8! corner permutations in phase 2
-#define N_CORNERS_CLASS = 2768  // number of equivalence classes concerning symmetry group D4h
-#define N_UD_EDGES = 40320  // 8! permutations of the edges in the U-face and D-face in phase 2
-
-#define N_SYM = 48  // number of cube symmetries of full group Oh
-#define N_SYM_D4h = 16  // Number of symmetries of subgroup D4h
-
+// FaceCube defined
 class FaceCube
 {
 public:
@@ -65,6 +47,7 @@ public:
     void printA();
     void operator=(FaceCube);
 };
+// CubieCube defined
 class CubieCube
 {
 public:
@@ -91,7 +74,9 @@ public:
     CubieCube operator*(CubieCube that);
     CubieCube operator*(int);
 };
-// {U, R, F, D, L, B}
+
+// rotations
+// {U, R, F, D, L, B} <- without rotations
 int rot[9][6] =
 {
     {U, B, R, D, F, L},
@@ -114,7 +99,7 @@ int rtoc[6][6] = //relative to color conversion by respective U
     {Green, Orange, White, Blue, Red, Yellow},
     {Orange, White, Green, Red, Yellow, Blue}
 };
-int ctor[6][6] =
+int ctor[6][6] = //color to relative conversion by color
 {
     {U, R, F, D, L, B},
     {F, U, R, B, D, L},
@@ -123,8 +108,10 @@ int ctor[6][6] =
     {B, D, L, F, U, R},
     {L, B, D, R, F, U}
 };
-char etoc[6] = {'Y','R','B','W','O','G'};
-string mtoc[18] = 
+
+char etoc[6] = {'Y','R','B','W','O','G'}; // color strings
+
+string mtoc[18] = // strings for HTM moves
 {
     "U/","U2","U'",
     "R/","R2","R'",
@@ -133,7 +120,7 @@ string mtoc[18] =
     "L/","L2","L'",
     "B/","B2","B'"
 };
-string pName[21] =
+string pName[21] = // strings for the names of the Perms
 {
     "Aa", "Ab",
     "E",
@@ -150,31 +137,41 @@ string pName[21] =
     "Ga", "Gb", "Gc", "Gd"
 };
 // helper functions
-int pow(int a, int b)
+int pow(int a, int b) // powers of 2 ints
 {
     return (int)pow((double)a,(double)b);
 }
-int ceo(int eo, int e)
+int ceo(int eo, int e) // returns the binary value in given spot
 {
     return (eo>>e)&1;
 }
-int cco(int co, int c)
+int cco(int co, int c) // returns ternary value in given slot inverted for color rather than placement
 {
-    //CHANGED FOR TESTING
     int ret = (int)(co/(pow(3,c)))%3;
     return ret?(!(ret-1)+1):ret;
 }
-int uco(int co, int c)
+int uco(int co, int c) // returns ternary value in given slot
 {
     return (int)(co/(pow(3,c)))%3;
 }
+int checkD(int eo[], int co[], CubieCube op) // checks cube distance
+{
+    int curD=8;
+    for(int p=0; p<4; p++)
+    {
+        if(eo[p]==edgeColor[op.ep[p]][ceo(op.eo,p)])
+            curD--;
+        if(co[p]==cornerColor[op.cp[p]][cco(op.co,p)])
+            curD--;
+    }
+    return curD;
+}
 int a();
-void getState(int[]);
-int etoi(char);
-char itoe(int);
-CubieCube algo(string algs, CubieCube in=CubieCube());
-void resOP(int[],int[],CubieCube*);
-int resSnS(int[],int[],CubieCube*);
-void resOri(int[],int[],CubieCube*);
-void testOP(int eoco[]);
+void getState(int[]); // gets cube state for access to res()
+int etoi(char); // returns int of relative given the relative's char
+char itoe(int); // returns char of relative given the int
+CubieCube algo(string algs, CubieCube in=CubieCube()); // given a string, returns a cube with the operations done
+void resOP(int[],int[],CubieCube*); // resolves OP
+int resSnS(int[],int[],CubieCube*); // resolves SnS once
+void resOri(int[],int[],CubieCube*); // resolves reOri
 #endif

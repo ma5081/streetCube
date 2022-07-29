@@ -20,6 +20,7 @@ int main()
     cout<<cube.scramble<<endl;
 }
 
+// get state manually
 // void getState(int b[])
 // {
 //     char c;
@@ -31,6 +32,8 @@ int main()
 //             i--;
 //     }
 // }
+
+// get random state
 void getState(int b[])
 {
     char c;

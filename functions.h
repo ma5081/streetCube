@@ -5,7 +5,7 @@
 #include <sstream>
 #include "move.h"
 
-CubieCube algo(string algs, CubieCube in)
+CubieCube algo(string algs, CubieCube in) // takes string and applies changes from string to given or blank cube
 {
     istringstream alg = istringstream(algs);
 
@@ -15,12 +15,13 @@ CubieCube algo(string algs, CubieCube in)
     //alg>>a;
     while (!alg.eof())
     {
+        // reset params
         int m[3] = {-1,0,0}; // extra move / rotation axis / f or null or p
         char a = '\0';
         char c = '\0';
-        b=0;
+        b=-1;
         alg>>a;
-        switch (a)
+        switch (a) // find move
         {
         case 'E':
             m[0] = D;
@@ -83,7 +84,7 @@ CubieCube algo(string algs, CubieCube in)
         }
 
         alg>>c;
-        switch(c)
+        switch(c) // find directionality
         {
         case '3':
         case '\'':
@@ -96,7 +97,8 @@ CubieCube algo(string algs, CubieCube in)
             d = 0;
             break;
         }
-        if(m[2])
+
+        if(m[2]) // apply rotation
             cube.rotRes(m[1],(m[2]-1)?(2-d):d);
         if(b<0) continue;
         
@@ -114,7 +116,7 @@ CubieCube algo(string algs, CubieCube in)
     return cube;
 }
 
-void setup()
+void setup() // sets up the algorithm cubes
 {
     for(int i=0; i<21; i++)
         permCube[i] = CubieCube(permCubeA[i]);

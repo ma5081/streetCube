@@ -25,18 +25,6 @@ mutex mC;
 mutex mD;
 mutex mO;
 void res(int eo[], int co[], int a);
-int checkD(int eo[], int co[], CubieCube op)
-{
-    int curD=8;
-    for(int p=0; p<4; p++)
-    {
-        if(eo[p]==edgeColor[op.ep[p]][ceo(op.eo,p)])
-            curD--;
-        if(co[p]==cornerColor[op.cp[p]][cco(op.co,p)])
-            curD--;
-    }
-    return curD;
-}
 int b() // checks if auto generated OLLs and PLLs only affect LL
 { 
     setup();
@@ -89,7 +77,7 @@ int b() // checks if auto generated OLLs and PLLs only affect LL
     return 0;
 }
 
-int c()
+int c() // speed test
 {
     auto start = high_resolution_clock::now();
     setup();
@@ -113,7 +101,7 @@ int c()
     return 0;
 }
 
-int d()
+int d() //  
 {
     CubieCube op = CubieCube();
     for (int i = 0; i < 4; i++)
@@ -123,7 +111,7 @@ int d()
     }
     return 0;
 }
-void fn(int ab[])
+void fn(int ab[]) // thread function for checking all cubes
 {
 	int a = ab[0]; int b = ab[1];
 	for(int c=0; c<6; c++)
@@ -163,7 +151,7 @@ void fn(int ab[])
         }
     }
 }
-int main()
+int main() // checks all possible cubes, returns time and percentage of cubes at distance after each step
 {
     setup();
     auto start = high_resolution_clock::now();
@@ -210,7 +198,7 @@ int main()
     return 0;
 }
 
-void res(int eo[], int co[], int a)
+void res(int eo[], int co[], int a) // resolves cube state while checking time and distance
 {
     CubieCube cube = CubieCube();
     auto start = high_resolution_clock::now();
@@ -258,7 +246,7 @@ void res(int eo[], int co[], int a)
     sumD += duration_cast<microseconds>(stop - start);
     mD.unlock();
 }
-int f()
+int f() // used to test setup()
 {
     setup();
     return 0;

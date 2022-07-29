@@ -6,22 +6,21 @@
 #include "facelet.h"
 #include "cubie.h"
 
-void res(int eo[], int co[],CubieCube cube)
+void res(int eo[], int co[],CubieCube cube) // resolves cube to eo/co state
 {
-    cout<<itoe(co[ULB])<<" "<<itoe(eo[UB])<<" "<<itoe(co[UBR])<<endl
-        <<itoe(eo[UL]) <<" "<<"U"         <<" "<<itoe(eo[UR]) <<endl
-        <<itoe(co[UFL])<<" "<<itoe(eo[UF])<<" "<<itoe(co[URF])<<endl;
-    resOP(eo,co,&cube);
-    cube.translate().printU();
+    if(!checkD(eo,co,cube)) return;
+    resOP(eo,co,&cube); // resolves OP
+    if(!checkD(eo,co,cube)) return;
     int T1E = 0;
     int T1C = 0;
-    for(int i = 0; i<4; i++)
+    for(int i = 0; i<4; i++) // checks for needed T1 changes
     {
         if(eo[i]==D)
             T1E = T1E|1<<i;
         if(co[i]==D)
             T1C = T1C|1<<i;
     }
+    // applies T1 changes
     if(T1E)
     {
         cube*pariCubeT1E[T1E];
@@ -32,24 +31,27 @@ void res(int eo[], int co[],CubieCube cube)
         cube*pariCubeT1C[T1C];
         cube.scramble+="\n"+pariT1CA[T1C];
     }
+    if(!checkD(eo,co,cube)) return;
     cube.scramble+="\n";
-    while(resSnS(eo,co,&cube));
-    resOri(eo,co,&cube);
-    cout<<cube.scramble<<endl;
+    while(resSnS(eo,co,&cube)) if(!checkD(eo,co,cube)) return; // repeats SnS till no more pieces can be resolved
+    resOri(eo,co,&cube); // reorients pieces that need to be reoriented
 }
-CubieCube res(int eo[], int co[])
+CubieCube res(int eo[], int co[]) // resolves blank cube to eo/co state and returns it
 {
     CubieCube cube = CubieCube();
-    resOP(eo,co,&cube);
+    if(!checkD(eo,co,cube)) return cube;
+    resOP(eo,co,&cube); // resolves OP
+    if(!checkD(eo,co,cube)) return cube;
     int T1E = 0;
     int T1C = 0;
-    for(int i = 0; i<4; i++)
+    for(int i = 0; i<4; i++) // checks for needed T1 changes
     {
         if(eo[i]==D)
             T1E = T1E|1<<i;
         if(co[i]==D)
             T1C = T1C|1<<i;
     }
+    // applies T1 changes
     if(T1E)
     {
         cube*pariCubeT1E[T1E];
@@ -60,12 +62,13 @@ CubieCube res(int eo[], int co[])
         cube*pariCubeT1C[T1C];
         cube.scramble+="\n"+pariT1CA[T1C];
     }
+    if(!checkD(eo,co,cube)) return cube;
     cube.scramble+="\n";
-    while(resSnS(eo,co,&cube));
-    resOri(eo,co,&cube);
+    while(resSnS(eo,co,&cube)) if(!checkD(eo,co,cube)) return cube; // repeats SnS till no more pieces can be resolved
+    resOri(eo,co,&cube); // reorients pieces that need to be reoriented
     return cube;
 }
-void resOri(int eo[], int co[], CubieCube *cube)
+void resOri(int eo[], int co[], CubieCube *cube) // reorients pieces that need to be
 {
     for(int i=0; i<4; i++)
     {
@@ -74,39 +77,38 @@ void resOri(int eo[], int co[], CubieCube *cube)
             cube->scramble+="\n"+pariOriEA[i];
             *cube*pariCubeOriE[i];
         }
-        if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3])
+        if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3]) // reorient corner
         {
-            bool b = co[i]!=cornerColor[cube->cp[i]][(1+cco(cube->co,i))%3];
+            bool b = co[i]!=cornerColor[cube->cp[i]][(1+cco(cube->co,i))%3]; // check orientation needed
             cube->scramble+="\n"+pariOriCA[i*2+b];
             *cube*pariCubeOriC[i*2+b];
         }
     }
 }
-int resSnS(int eo[], int co[], CubieCube *cube)
+int resSnS(int eo[], int co[], CubieCube *cube) // Scans and Swaps needed pieces in the bottom 2 layers with the top layer
 {
-    int r = 0;
+    int r = 0; // repeat flag
     for(int i = 0; i<4; i++)
     {
         if(eo[i]!=edgeColor[cube->ep[i]][ceo(cube->eo,i)%2]) // scan and snap edge
         {
             for(int j = 0; j<4; j++)
             {
-                int q = (j+i)%4+4;
-                int p = (j+i)%4+8;
+                int q = (j+i)%4+4; // bottom layer edge number
+                int p = (j+i)%4+8; // mid layer edge number
                 if(eo[i]==edgeColor[cube->ep[q]][(1+ceo(cube->eo,q))%2])
                 {
-                    if(!(j%2)) {*cube*advMoveCube[Dp];cube->scramble+=mtoc[Dp]+" ";}
+                    if(!(j%2)) {*cube*advMoveCube[Dp];cube->scramble+=mtoc[Dp]+" ";} // if scanned piece is not on the sides of target, D' to resolve that
                     cube->scramble+=pariSnSA[0][(j>1)+i*2]+" ";
-                    *cube*pariCubeSnS[0][(j>1)+i*2];
+                    *cube*pariCubeSnS[0][(j>1)+i*2]; // apply the appropriate algorithm
                     r = 1;
                     break;
                 }
-                else if(eo[i]==edgeColor[cube->ep[q]][(ceo(cube->eo,q))%2])
+                else if(eo[i]==edgeColor[cube->ep[q]][(ceo(cube->eo,q))%2]) // checks for swap with pieces on D-face
                 {
-                    cout<<"swap e"<<i<<" with e"<<q<<endl;
                     if(j) {*cube*advMoveCube[Df+j-1];cube->scramble+=mtoc[Df+j-1]+" ";}
                     cube->scramble+=pariT1EA[1<<i]+" ";
-                    *cube*pariCubeT1E[1<<i];
+                    *cube*pariCubeT1E[1<<i]; // apply T1 alg
                     r = 1;
                     break;
                 }
@@ -123,7 +125,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                             else u+=3;
                         }
                     }
-                    else if (i%2)
+                    else if (i%2) // if not on same layer and not on R/L
                     {
                         if(j==2) u+=1;
                         else u+=3;
@@ -135,9 +137,9 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                         cube->scramble+=mtoc[u-1]+" ";
                         cube->scramble+=pariSnSA[4][iadj*2+(jadj==1)]+" ";
                         cube->scramble+=mtoc[2-(u-1)]+" ";
-                        *cube*advMoveCube[u-1];
-                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
-                        *cube*advMoveCube[2-(u-1)];
+                        *cube*advMoveCube[u-1]; // moves U
+                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)]; //applies alg based on new i
+                        *cube*advMoveCube[2-(u-1)]; // returns U to original state
                     }
                     else
                         {*cube*pariCubeSnS[4][i*2+(j==1)];cube->scramble+=pariSnSA[4][i*2+(j==1)]+" ";} // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the right or left
@@ -157,7 +159,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                             else u+=3;
                         }
                     }
-                    else if (!(i%2))
+                    else if (!(i%2)) // if edge not on same layer and not on F/B
                     {
                         if(j==2) u+=1;
                         else u+=3;
@@ -169,9 +171,9 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                         cube->scramble+=mtoc[u-1]+" ";
                         cube->scramble+=pariSnSA[4][iadj*2+(jadj==1)]+" ";
                         cube->scramble+=mtoc[2-(u-1)]+" ";
-                        *cube*advMoveCube[u-1];
-                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
-                        *cube*advMoveCube[2-(u-1)];
+                        *cube*advMoveCube[u-1]; // apply U change
+                        *cube*pariCubeSnS[4][iadj*2+(jadj==1)]; // apply alg based on new placement
+                        *cube*advMoveCube[2-(u-1)]; // revert U change
                     }
                     else
                         {*cube*pariCubeSnS[4][i*2+(j==1)];cube->scramble+=pariSnSA[4][i*2+(j==1)]+" ";} // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the front or back
@@ -184,8 +186,8 @@ int resSnS(int eo[], int co[], CubieCube *cube)
         {
             for(int j = 0; j<4; j++)
             {
-                int q = (j+i)%4+4;
-                if(co[i]==cornerColor[cube->cp[q]][(1+cco(cube->co,q))%3])
+                int q = (j+i)%4+4; // scanned corner number
+                if(co[i]==cornerColor[cube->cp[q]][(1+cco(cube->co,q))%3]) // check first orientation
                 {
                     int d=0;
                     if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
@@ -200,7 +202,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                     r = 1;
                     break;
                 }
-                else if(co[i]==cornerColor[cube->cp[q]][(2+cco(cube->co,q))%3])
+                else if(co[i]==cornerColor[cube->cp[q]][(2+cco(cube->co,q))%3]) // check second orientation
                 {
                     int d=0;
                     if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
@@ -215,12 +217,11 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                     r = 1;
                     break;
                 }
-                else if(co[i]==cornerColor[cube->cp[q]][(cco(cube->co,q))%3])
+                else if(co[i]==cornerColor[cube->cp[q]][(cco(cube->co,q))%3]) // check D-face
                 {
-                    cout<<"swap c"<<i<<" with c"<<q<<endl;
                     if(j) {*cube*advMoveCube[Df+j-1];cube->scramble+=mtoc[Df+j-1]+" ";}
                     cube->scramble+=pariT1CA[1<<i]+" ";
-                    *cube*pariCubeT1C[1<<i];
+                    *cube*pariCubeT1C[1<<i]; // apply T1
                     r = 1;
                     break;
                 }
@@ -246,7 +247,7 @@ void resOP(int eo[], int co[], CubieCube* cube)
     }
     long oPoss=0;
     int oU[57]={};
-    for(int i=0; i<57; i++) //check for U congruent OLLs
+    for(int i=0; i<57; i++) //check for nominating OLLs
     {
         for(int u=-1; u<3; u++)
         {
@@ -268,30 +269,30 @@ void resOP(int eo[], int co[], CubieCube* cube)
                 }
                 if(o) break;
             }
-            if(!o){oPoss = oPoss|(1<<i);oU[i]=oU[i]|(1<<(u+1));}
+            if(!o){oPoss = oPoss|(1<<i);oU[i]=oU[i]|(1<<(u+1));} // no U-Face pieces changed, add to nomination
         }
     }
     if(!oPoss) return;
     int minD=8;
     CubieCube minOP = CubieCube();
-    for(int p=0; p<4; p++)
+    for(int p=0; p<4; p++) // set blank cube distance
     {
         if(eo[p]==D||eo[p]==edgeColor[minOP.ep[p]][ceo(minOP.eo,p)%2])
             minD--;
         if(co[p]==D||co[p]==cornerColor[minOP.cp[p]][cco(minOP.co,p)%3])
             minD--;
     }
-    for(int i=0; i<57; i++) 
+    for(int i=0; i<57; i++) // OLLs
     {
         if(ceo(oPoss,i))
         {
-            for(int j=0; j<22; j++)
+            for(int j=0; j<22; j++) // PLLs
             {
-                for(int k=-1; k<3; k++)
+                for(int k=-1; k<3; k++) // PLL AUF
                 {
-                    for(int u=0; u<4; u++) 
+                    for(int u=0; u<4; u++) // OLL AUF
                     {
-                        if(ceo(oU[i],u))
+                        if(ceo(oU[i],u)) // valid OLL AUF
                         {
 
                             CubieCube op = CubieCube();
@@ -303,7 +304,7 @@ void resOP(int eo[], int co[], CubieCube* cube)
                             op*orieCube[i];
                             if(u>0)
                                op*advMoveCube[u-1];
-                            for(int p=0; p<4; p++)
+                            for(int p=0; p<4; p++) // check distance
                             {
                                 if(eo[p]==D||eo[p]==edgeColor[op.ep[p]][ceo(op.eo,p)%2])
                                     curD--;
@@ -312,6 +313,7 @@ void resOP(int eo[], int co[], CubieCube* cube)
                             }
                             if(curD<minD)
                             {
+                                // update min stats
                                 uMin=u;
                                 kMin=k+1;
                                 oMin=i;
@@ -325,6 +327,7 @@ void resOP(int eo[], int co[], CubieCube* cube)
             }
         }
     }
+    // add scramble
     cube->scramble+="\n";
     if(pMin) cube->scramble+=pName[pMin-1]+" perm: "+permCubeA[pMin-1];
     if(pMin&&kMin) cube->scramble+=" ";
@@ -332,6 +335,7 @@ void resOP(int eo[], int co[], CubieCube* cube)
     if(pMin||kMin) cube->scramble+="\n";
     cube->scramble+="OLL "+to_string(oMin)+": "+orieCubeA[oMin];
     if(uMin) cube->scramble+=" "+mtoc[uMin-1];
+    // apply changes
     *cube*minOP;
     return;
 }
