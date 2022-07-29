@@ -5,6 +5,38 @@
     using namespace std;
 #include "facelet.h"
 #include "cubie.h"
+
+void res(int eo[], int co[],CubieCube cube)
+{
+    cout<<itoe(co[ULB])<<" "<<itoe(eo[UB])<<" "<<itoe(co[UBR])<<endl
+        <<itoe(eo[UL]) <<" "<<"U"         <<" "<<itoe(eo[UR]) <<endl
+        <<itoe(co[UFL])<<" "<<itoe(eo[UF])<<" "<<itoe(co[URF])<<endl;
+    resOP(eo,co,&cube);
+    cube.translate().printU();
+    int T1E = 0;
+    int T1C = 0;
+    for(int i = 0; i<4; i++)
+    {
+        if(eo[i]==D)
+            T1E = T1E|1<<i;
+        if(co[i]==D)
+            T1C = T1C|1<<i;
+    }
+    if(T1E)
+    {
+        cube*pariCubeT1E[T1E];
+        cube.scramble+="\n"+pariT1EA[T1E];
+    }
+    if(T1C)
+    {
+        cube*pariCubeT1C[T1C];
+        cube.scramble+="\n"+pariT1CA[T1C];
+    }
+    cube.scramble+="\n";
+    while(resSnS(eo,co,&cube));
+    resOri(eo,co,&cube);
+    cout<<cube.scramble<<endl;
+}
 CubieCube res(int eo[], int co[])
 {
     CubieCube cube = CubieCube();
@@ -71,6 +103,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                 }
                 else if(eo[i]==edgeColor[cube->ep[q]][(ceo(cube->eo,q))%2])
                 {
+                    cout<<"swap e"<<i<<" with e"<<q<<endl;
                     if(j) {*cube*advMoveCube[Df+j-1];cube->scramble+=mtoc[Df+j-1]+" ";}
                     cube->scramble+=pariT1EA[1<<i]+" ";
                     *cube*pariCubeT1E[1<<i];
@@ -184,6 +217,7 @@ int resSnS(int eo[], int co[], CubieCube *cube)
                 }
                 else if(co[i]==cornerColor[cube->cp[q]][(cco(cube->co,q))%3])
                 {
+                    cout<<"swap c"<<i<<" with c"<<q<<endl;
                     if(j) {*cube*advMoveCube[Df+j-1];cube->scramble+=mtoc[Df+j-1]+" ";}
                     cube->scramble+=pariT1CA[1<<i]+" ";
                     *cube*pariCubeT1C[1<<i];

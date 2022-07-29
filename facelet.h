@@ -49,6 +49,7 @@ void FaceCube::printU(int j)
             break;
         }
         if(!(i%3))p+='\n';
+        else p+=' ';
     }
     cout<<p;
 }

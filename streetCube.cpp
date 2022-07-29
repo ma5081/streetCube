@@ -13,9 +13,9 @@ int main()
     int* helpArr[8] = {&co[ULB], &eo[UB], &co[UBR], &eo[UL], &eo[UR], &co[UFL], &eo[UF], &co[URF]};
     for(int i = 0; i<8; i++)
         *helpArr[i]=b[i];
-    cout<<itoe(co[ULB])<<itoe(eo[UB])<<itoe(co[UBR])<<endl
-        <<itoe(eo[UL]) <<'U'         <<itoe(eo[UR]) <<endl
-        <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
+    cout<<itoe(co[ULB])<<" "<<itoe(eo[UB])<<" "<<itoe(co[UBR])<<endl
+        <<itoe(eo[UL]) <<" "<<'U'         <<" "<<itoe(eo[UR]) <<endl
+        <<itoe(co[UFL])<<" "<<itoe(eo[UF])<<" "<<itoe(co[URF])<<endl;
     cube = res(eo,co);
     cout<<cube.scramble<<endl;
 }

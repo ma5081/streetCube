@@ -2,6 +2,8 @@
 #define DEFS
 #include "enums.h"
 #include <math.h>
+#include <iostream>
+    using namespace std;
 // Map the corner positions to facelet positions.
 int cornerFacelet[8][3] = 
             {
@@ -111,6 +113,15 @@ int rtoc[6][6] = //relative to color conversion by respective U
     {White, Green, Orange, Yellow, Blue, Red},
     {Green, Orange, White, Blue, Red, Yellow},
     {Orange, White, Green, Red, Yellow, Blue}
+};
+int ctor[6][6] =
+{
+    {U, R, F, D, L, B},
+    {F, U, R, B, D, L},
+    {R, F, U, L, B, D},
+    {D, L, B, U, R, F},
+    {B, D, L, F, U, R},
+    {L, B, D, R, F, U}
 };
 char etoc[6] = {'Y','R','B','W','O','G'};
 string mtoc[18] = 

@@ -3,33 +3,28 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
-#include <atomic>
 #include <mutex>
-#include <condition_variable>
     using namespace std;
     using namespace std::chrono;
 #include "facelet.h"
 #include "cubie.h"
 #include "streetCube.h"
-// atomic<int> Q0;
-// atomic<int> Q1;
-// atomic<int> Q2;
-// atomic<int> Q3;
-// atomic<int> Q4;
-// atomic<int> Q5;
-// atomic<int> Q6;
-// atomic<int> Q7;
-// atomic<int>* avgD[]={&Q0,&Q1,&Q2,&Q3,&Q4,&Q5,&Q6,&Q7};
 int avgA[9]={0};
 int avgB[9]={0};
 int avgC[9]={0};
 int avgD[9]={0};
-microseconds sumT;
-// atomic<int> counter;
-// mutex m;
-// mutex t;
-// condition_variable cv;
-//int res(int eo[], int co[]);
+int avgO[9]={0};
+microseconds sumA;
+microseconds sumB;
+microseconds sumC;
+microseconds sumD;
+microseconds sumO;
+mutex mA;
+mutex mB;
+mutex mC;
+mutex mD;
+mutex mO;
+void res(int eo[], int co[], int a);
 int checkD(int eo[], int co[], CubieCube op)
 {
     int curD=8;
@@ -115,6 +110,7 @@ int c()
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << duration.count() << endl;
+    return 0;
 }
 
 int d()
@@ -125,460 +121,145 @@ int d()
         printf("%c\n",itoe(edgeColor[op.ep[i]][ceo(op.eo,i)%2]));
         printf("%c\n",itoe(cornerColor[op.cp[i]][ceo(op.co,i)%3]));
     }
+    return 0;
 }
-
-int main()
+void fn(int ab[])
 {
-    setup();
-    //b();
-    // for(int i=0; i<8; i++)
-    //     atomic_init(avgD[i],0);
-    // atomic_init(&counter,0);
-    for(int a=0; a<1; a++)
+	int a = ab[0]; int b = ab[1];
+	for(int c=0; c<6; c++)
     {
-        for(int b=0; b<1; b++)
+        for(int d=0; d<6; d++)
         {
-            for(int c=0; c<1; c++)
+            for(int e=0; e<6; e++)
             {
-                for(int d=0; d<1; d++)
+                for(int f=0; f<6; f++)
                 {
-                    for(int e=0; e<1; e++)
+                    for(int g=0; g<6; g++)
                     {
-                        for(int f=0; f<1; f++)
+                        for(int h=0; h<6; h++)
                         {
-                            for(int g=0; g<1; g++)
+                            int arr[8]={a,b,c,d,e,f,g,h};
+                            int j=-1;
+                            int eo[4];
+                            int co[4];
+                            for(int i=0; i<4; i++)
                             {
-                                for(int h=0; h<1; h++)
-                                {
-                                    int arr[8]={a,b,c,d,e,f,g,h};
-                                    int j=-1;
-                                    int eo[4];
-                                    int co[4];
-                                    for(int i=0; i<4; i++)
-                                    {
-                                        j++;
-                                        eo[i]=arr[j];
-                                        j++;
-                                        co[i]=arr[j];
-                                    }
-                                    avgD[checkD(eo,co,CubieCube())]++;
-                                    // int eoco[8];
-                                    // for(int i=0; i<4; i++){eoco[i]=eo[i];eoco[i+4]=co[i];}
-                                    // testOP(eoco);
-                                    // counter++;
-                                    // thread th(testOP,eoco);
-                                    // th.detach();
-                                }
+                                j++;
+                                eo[i]=arr[j];
+                                j++;
+                                co[i]=arr[j];
                             }
+                            auto start = high_resolution_clock::now();
+                            auto stop = high_resolution_clock::now();
+                            mO.lock();
+                            avgO[checkD(eo,co,CubieCube())]++;
+                            sumO += duration_cast<microseconds>(stop - start);
+                            mO.unlock();
+                            res(eo,co,0);
                         }
                     }
                 }
             }
         }
-        printf("%d/6 done\n",a);
     }
-    // unique_lock<mutex> lock(m);
-    // cv.wait(lock,[]()
-    // {
-    // cout<<"time: "<<sumT.count()<<endl;
-    // srand((unsigned)time(NULL));
-    // auto start = high_resolution_clock::now();
-    // int runs=100;
-    // for(int i=0;i<runs;i++)
-    // {
-    //     int eoco[8];
-    //     for(int i=0; i<8; i++){eoco[i]=rand()%6;}
-    //     int eo[4];
-    //     int co[4];
-    //     for(int i=0; i<4; i++){eo[i]=(int)eoco[i];co[i]=(int)eoco[i+4];}
-    //     res(eo,co);
-    // }
-    // auto stop = high_resolution_clock::now();
-    // auto avgdur = duration_cast<microseconds>(stop - start)/runs;
-    cout<<fixed<<setprecision(2);
-    for(int i=0; i<9; i++)
-        cout<<i<<": "<<((avgD[i])/1679616.0)*100<<"%"<<endl;
-    cout<<endl;
-    // for(int i=0; i<9; i++)
-    //     cout<<i<<": "<<((avgC[i])/(double)runs)*100<<"%"<<endl;
-    // cout<<endl;
-    // for(int i=0; i<9; i++)
-    //     cout<<i<<": "<<((avgB[i])/(double)runs)*100<<"%"<<endl;
-    // cout<<endl;
-    // for(int i=0; i<9; i++)
-    //     cout<<i<<": "<<((avgA[i])/(double)runs)*100<<"%"<<endl;
-    // cout<<avgdur.count()<<endl;
-    // });
 }
-// void resOri(int eo[], int co[], CubieCube *cube)
-// {
-//     for(int i=0; i<4; i++)
-//     {
-//         if(eo[i]!=edgeColor[cube->ep[i]][ceo(cube->eo,i)%2]) // reorient edge
-//         {
-//             cout<<itoe(co[ULB])<<itoe(eo[UB])<<itoe(co[UBR])<<endl
-//                 <<itoe(eo[UL]) <<'U'         <<itoe(eo[UR]) <<endl
-//                 <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
-//             cout<<endl;
-//             cube->translate().printU();
-//             printf("reOri E %d\n",cube->ep[i]);
-//             cout<<pariOriEA[i]<<endl;
-//             *cube*pariCubeOriE[i];
-//             cube->translate().printU();
-//             cout<<endl;
-//         }
-//         if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3])
-//         {
-//             bool b = co[i]!=cornerColor[cube->cp[i]][(1+cco(cube->co,i))%3];
-//             *cube*pariCubeOriC[i*2+b];
-//         }
-//     }
-// }
-// int resSnS(int eo[], int co[], CubieCube *cube)
-// {
-//     int r = 0;
-//     for(int i = 0; i<4; i++)
-//     {
-//         if(eo[i]!=edgeColor[cube->ep[i]][ceo(cube->eo,i)%2]) // scan and snap edge
-//         {
-//             for(int j = 0; j<4; j++)
-//             {
-//                 int q = (j+i)%4+4;
-//                 int p = (j+i)%4+8;
-//                 if(eo[i]==edgeColor[cube->ep[q]][(1+ceo(cube->eo,q))%2])
-//                 {
-//                     if(!(j%2)) *cube*advMoveCube[Dp];
-//                     *cube*pariCubeSnS[0][(j>1)+i*2];
-//                     // cout<<pariSnSA[0][(j>1)+i*2]<<endl;
-//                     r = 1;
-//                     break;
-//                 }
-//                 else if(eo[i]==edgeColor[cube->ep[q]][(ceo(cube->eo,q))%2])
-//                 {
-//                     if(j) *cube*advMoveCube[Df+j-1];
-//                     *cube*pariCubeT1E[1<<i];
-//                     r = 1;
-//                     break;
-//                 }
-//                 else if(eo[i]==edgeColor[cube->ep[p]][(1+ceo(cube->eo,p))%2]) // midlayer R/L
-//                 {
-//                     int u = 0;
-//                     if((j+3)%4 > 1) // if edge is on the same layer
-//                     {
-//                         if(!(i%2)) // if the original piece is on R/L
-//                             u+=2;
-//                         else
-//                         {
-//                             if(j==3) u+=1;
-//                             else u+=3;
-//                         }
-//                     }
-//                     else if (i%2)
-//                     {
-//                         if(j==2) u+=1;
-//                         else u+=3;
-//                     }
-//                     // cout<<"R/L "<<u<<" between e"<<i<<" and e"<<p<<endl;
-//                     if(u) 
-//                     {
-//                         int iadj = (i+u)%4; // finds new i
-//                         int jadj = (j-u+4)%4; // j in relation to the new adj
-//                         *cube*advMoveCube[u-1];
-//                         *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
-//                         // cout<<pariSnSA[4][iadj*2+(jadj==1)]<<endl;
-//                         *cube*advMoveCube[2-(u-1)];
-//                     }
-//                     else
-//                         *cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the right or left
-//                     r=1;
-//                     break;
-//                 }
-//                 else if(eo[i]==edgeColor[cube->ep[p]][(ceo(cube->eo,p))%2]) // midlayer F/B
-//                 {
-//                     int u = 0;
-//                     if((j+3)%4 > 1) // if edge is on the same layer
-//                     {
-//                         if(i%2) // if the original piece is on F/B
-//                             u+=2;
-//                         else
-//                         {
-//                             if(j==3) u+=1;
-//                             else u+=3;
-//                         }
-//                     }
-//                     else if (!(i%2))
-//                     {
-//                         if(j==2) u+=1;
-//                         else u+=3;
-//                     }
-//                     // cout<<"F/B "<<u<<" between e"<<i<<" and e"<<p<<endl;
-//                     if(u) 
-//                     {
-//                         int iadj = (i+u)%4; // finds the new i
-//                         int jadj = (j-u+4)%4; // finds the j in relation to new i
-//                         *cube*advMoveCube[u-1];
-//                         *cube*pariCubeSnS[4][iadj*2+(jadj==1)];
-//                         // cout<<pariSnSA[4][iadj*2+(jadj==1)]<<endl;
-//                         *cube*advMoveCube[2-(u-1)];
-//                     }
-//                     else
-//                         *cube*pariCubeSnS[4][i*2+(j==1)]; // i*2 gives the correct piece chosen, j==1 checks if the piece is the one on the front or back
-//                     r=1;
-//                     break;
-//                 }
-//             }
-//         }
-//         if(co[i]!=cornerColor[cube->cp[i]][cco(cube->co,i)%3]) // scan and snap corner
-//         {
-//             // printf("SnS: c%d ",i);
-//             for(int j = 0; j<4; j++)
-//             {
-//                 int q = (j+i)%4+4;
-//                 if(co[i]==cornerColor[cube->cp[q]][(1+cco(cube->co,q))%3])
-//                 {
-//                     // printf("ori 1 with c%d ",q);
-//                     int d=0;
-//                     if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
-//                     if((cornerFacelet[q][1]/9)%3 == 2) // if the interesting facelet is in F or B
-//                     {
-//                         if(j%2) d++; // if corner is in slot 1 or 3, use D/
-//                         else d+=3; // if corner is in slot 0 or 2, use D'
-//                     }
-//                     if(d) *cube*advMoveCube[Df+(d-1)%3];
-//                     // printf("d: %d\n",d);
-//                     *cube*pariCubeSnS[3][i*2+0]; 
-//                     // cout<<pariSnSA[3][i*2+0]<<endl;
-//                     r = 1;
-//                     break;
-//                 }
-//                 else if(co[i]==cornerColor[cube->cp[q]][(2+cco(cube->co,q))%3])
-//                 {
-//                     // printf("ori 2 with c%d ",q);
-//                     int d=0;
-//                     if((q-4)/2!=i/2) d+=2; // if corner is not on the same face, D2
-//                     if((cornerFacelet[q][2]/9)%3 == 2) // if the interesting facelet is in F or B
-//                     {
-//                         if(j%2) d++; // if corner is in slot 1 or 3, use D/
-//                         else d+=3; // if corner is in slot 0 or 2, use D'
-//                     }
-//                     // printf("d: %d\n",d);
-//                     if(d) *cube*advMoveCube[Df+(d-1)%3];
-//                     *cube*pariCubeSnS[3][i*2+1];
-//                     r = 1;
-//                     break;
-//                 }
-//                 else if(co[i]==cornerColor[cube->cp[q]][(cco(cube->co,q))%3])
-//                 {
-//                     //printf("ori 0 with c%d\n",q);
-//                     if(j) *cube*advMoveCube[Df+j-1];
-//                     *cube*pariCubeT1C[1<<i];
-//                     r = 1;
-//                     break;
-//                 }
-//             }
-//         }
-//     }
-//     return r;
-// }
-// int res(int eo[], int co[])
-// {
-//     // cout<<itoe(co[ULB])<<itoe(eo[UB])<<itoe(co[UBR])<<endl
-//     //     <<itoe(eo[UL]) <<'U'         <<itoe(eo[UR]) <<endl
-//     //     <<itoe(co[UFL])<<itoe(eo[UF])<<itoe(co[URF])<<endl;
-//     CubieCube cube = CubieCube();
-//     cube*resOP(eo,co);
-//     avgA[checkD(eo,co,cube)]++;
-//     int T1E = 0;
-//     int T1C = 0;
-//     for(int i = 0; i<4; i++)
-//     {
-//         if(eo[i]==D)
-//             T1E = T1E|1<<i;
-//         if(co[i]==D)
-//             T1C = T1C|1<<i;
-//     }
-//     if(T1E)
-//         cube*pariCubeT1E[T1E];
-//     if(T1C)
-//         cube*pariCubeT1C[T1C];
-//     avgB[checkD(eo,co,cube)]++;
-//     while(resSnS(eo,co,&cube));
-//     avgC[checkD(eo,co,cube)]++;
-//     resOri(eo,co,&cube);
-//     return checkD(eo,co,cube);
-// }
-// CubieCube resOP(int eo[], int co[])
-// {
-//     for(int i=0; i<4; i++)
-//     {
-//         if(eo[i]!=U && eo[i]!=D)
-//             break;
-//         if(co[i]!=U && co[i]!=D)
-//             break;
-//         if(i==3)
-//             return CubieCube();
-//     }
-//     long oPoss=0;
-//     int oU[57]={};
-//     for(int i=0; i<57; i++) //check for U congruent OLLs
-//     {
-//         for(int u=-1; u<3; u++)
-//         {
-//             CubieCube comp = CubieCube()*orieCube[i];
-//             if(u>=0)
-//                 comp*advMoveCube[u];
-//             int o = 0;
-//             for(int j=0; j<4; j++)
-//             {
-//                 if(eo[j]==0)
-//                 {
-//                     if(ceo(comp.eo,j)!=0)
-//                         o++;
-//                 }
-//                 if(co[j]==0)
-//                 {
-//                     if(cco(comp.co,j)!=0)
-//                         o++;
-//                 }
-//                 if(o) break;
-//             }
-//             if(!o){oPoss = oPoss|(1<<i);oU[i]=oU[i]|(1<<(u+1));}
-//         }
-//     }
-//     if(!oPoss) return CubieCube();
-//     int minD=8;
-//     CubieCube minOP = CubieCube();
-//     for(int p=0; p<4; p++)
-//     {
-//         if(eo[p]==D||eo[p]==edgeColor[minOP.ep[p]][ceo(minOP.eo,p)%2])
-//             minD--;
-//         if(co[p]==D||co[p]==cornerColor[minOP.cp[p]][cco(minOP.co,p)%3])
-//             minD--;
-//     }
-//     for(int i=0; i<57; i++) 
-//     {
-//         if(ceo(oPoss,i))
-//         {
-//             for(int j=0; j<21; j++)
-//             {
-//                 for(int k=-1; k<3; k++)
-//                 {
-//                     for(int u=0; u<4; u++) 
-//                     {
-//                         if(ceo(oU[i],u))
-//                         {
-//                             CubieCube op = CubieCube(permCube[j]);
-//                             int curD=8;
-//                             if(k>=0)
-//                                 op*advMoveCube[k];
-//                             op*orieCube[i];
-//                             if(u>0)
-//                                op*advMoveCube[u-1];
-//                             for(int p=0; p<4; p++)
-//                             {
-//                                 if(eo[p]==D||eo[p]==edgeColor[op.ep[p]][ceo(op.eo,p)%2])
-//                                     curD--;
-//                                 if(co[p]==D||co[p]==cornerColor[op.cp[p]][cco(op.co,p)%3])
-//                                     curD--;
-//                             }
-//                             if(curD<minD)
-//                             {
-//                                 minD = curD;
-//                                 minOP = op;
-//                                 if(!minD) return minOP;
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return minOP;
-// }
-// void testOP(int eoco[])
-// {
-//     auto start = high_resolution_clock::now();
-//     int eo[4];
-//     int co[4];
-//     for(int i=0; i<4; i++){eo[i]=(int)eoco[i];co[i]=(int)eoco[i+4];}
-//     long oPoss=0;
-//     int oU[57]={};
-//     for(int i=0; i<57; i++) //check for U congruent OLLs
-//     {
-//         for(int u=-1; u<3; u++)
-//         {
-//             CubieCube comp = CubieCube()*orieCube[i];
-//             if(u>=0)
-//                 comp*advMoveCube[u];
-//             int o = 0;
-//             for(int j=0; j<4; j++)
-//             {
-//                 if(eo[j]==0)
-//                 {
-//                     if(ceo(comp.eo,j)!=0)
-//                         o++;
-//                 }
-//                 if(co[j]==0)
-//                 {
-//                     if(cco(comp.co,j)!=0)
-//                         o++;
-//                 }
-//                 if(o) break;
-//             }
-//             if(!o){oPoss = oPoss|(1<<i);oU[i]=oU[i]|(1<<(u+1));}
-//         }
-//     }
-//     int minD=9;
-//     CubieCube minOP = CubieCube();
-//     for(int i=0; i<57; i++) 
-//     {
-//         if(ceo(oPoss,i))
-//         {
-//             for(int j=0; j<21; j++)
-//             {
-//                 for(int k=-1; k<3; k++)
-//                 {
-//                     for(int u=-1; u<3; u++) 
-//                   {
-//                         if(ceo(oU[i],u))
-//                         {
-//                             CubieCube op = CubieCube(permCube[j]);
-//                             int curD=8;
-//                             if(k>=0)
-//                                 op*advMoveCube[k];
-//                             op*orieCube[i];
-//                             if(u>=0)
-//                                op*advMoveCube[u];
-//                             for(int p=0; p<4; p++)
-//                             {
-//                                 if(eo[i]==D||eo[i]==(edgeColor[op.ep[i]][ceo(op.eo,i)%2]))
-//                                     curD--;
-//                                 if(co[i]==D||co[i]==cornerColor[op.cp[i]][ceo(op.co,i)%3])
-//                                     curD--;
-//                             }
-//                             if(curD<minD)
-//                             {
-//                                 minD = curD;
-//                                 minOP = op;
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     auto stop = high_resolution_clock::now();
-//     // t.lock();
-//     auto duration=duration_cast<microseconds>(stop - start);
-//     cout<<duration.count()<<endl;
-//     // t.unlock();
-//     avgD[minD]++;
-//     // lock_guard<mutex> lk(m);
-//     // counter--;
-//     // cv.notify_all();
-// }
+int main()
+{
+    setup();
+    auto start = high_resolution_clock::now();
+    auto stop = high_resolution_clock::now();
+    sumO = duration_cast<microseconds>(stop - start);
+    sumA = duration_cast<microseconds>(stop - start);
+    sumB = duration_cast<microseconds>(stop - start);
+    sumC = duration_cast<microseconds>(stop - start);
+    sumD = duration_cast<microseconds>(stop - start);
+    thread th[36];
+    for(int a=0; a<6; a++)
+    {
+        for(int b=0; b<6; b++)
+        {
+	        int ab[2]={a,b};
+            th[a*6+b] = thread(fn,ab);
+        }
+    }
+    for(int i=0; i<36; i++) th[i].join();
+    int runs = pow(6,8);
+    sumA /= runs;
+    sumB /= runs;
+    sumC /= runs;
+    sumD /= runs;
+    sumO /= runs;
+    cout<<fixed<<setprecision(2);
+    auto sumT = sumA+sumB+sumC+sumD+sumO;
+    cout<<"\nTotal time (us): "<<sumT.count()<<endl;
+    cout<<"benchmark time (us): "<<sumO.count()<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgO[i])/(double)runs)*100<<"%"<<endl;
+    cout<<"OP time (us): "<<sumA.count()<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgA[i])/(double)runs)*100<<"%"<<endl;
+    cout<<"T1 Parity time (us): "<<sumB.count()<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgB[i])/(double)runs)*100<<"%"<<endl;
+    cout<<"SnS time (us): "<<sumC.count()<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgC[i])/(double)runs)*100<<"%"<<endl;
+    cout<<"ReOri time (us): "<<sumD.count()<<endl;
+    for(int i=0; i<9; i++)
+        cout<<i<<": "<<((avgD[i])/(double)runs)*100<<"%"<<endl;
+    return 0;
+}
+
+void res(int eo[], int co[], int a)
+{
+    CubieCube cube = CubieCube();
+    auto start = high_resolution_clock::now();
+    resOP(eo,co,&cube);
+    auto stop = high_resolution_clock::now();
+    mA.lock();
+    avgA[checkD(eo,co,cube)]++;
+    sumA += duration_cast<microseconds>(stop - start);
+    mA.unlock();
+    start = high_resolution_clock::now();
+    int T1E = 0;
+    int T1C = 0;
+    for(int i = 0; i<4; i++)
+    {
+        if(eo[i]==D)
+            T1E = T1E|1<<i;
+        if(co[i]==D)
+            T1C = T1C|1<<i;
+    }
+    if(T1E)
+    {
+        cube*pariCubeT1E[T1E];
+    }
+    if(T1C)
+    {
+        cube*pariCubeT1C[T1C];
+    }
+    stop = high_resolution_clock::now();
+    mB.lock();
+    avgB[checkD(eo,co,cube)]++;
+    sumB += duration_cast<microseconds>(stop - start);
+    mB.unlock();
+    start = high_resolution_clock::now();
+    while(resSnS(eo,co,&cube));
+    stop = high_resolution_clock::now();
+    mC.lock();
+    avgC[checkD(eo,co,cube)]++;
+    sumC += duration_cast<microseconds>(stop - start);
+    mC.unlock();
+    start = high_resolution_clock::now();
+    resOri(eo,co,&cube);
+    stop = high_resolution_clock::now();
+    mD.lock();
+    avgD[checkD(eo,co,cube)]++;
+    sumD += duration_cast<microseconds>(stop - start);
+    mD.unlock();
+}
 int f()
 {
     setup();
-
+    return 0;
 }
